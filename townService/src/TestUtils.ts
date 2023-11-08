@@ -11,6 +11,7 @@ import {
   TypedEventBroadcaster,
 } from 'socket.io/dist/typed-events';
 import Player from './lib/Player';
+
 import {
   BoundingBox,
   ClientToServerEvents,
