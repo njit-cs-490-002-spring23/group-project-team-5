@@ -99,9 +99,9 @@ export interface GameState {
 
 export type OneNightWerewolfArea = WinnableGameState & {
   werewolves: Werewolf[];
-  seer: Server;
-  robber: Robber;
-  troublemaker: Troublemaker;
+  seer: Server[];
+  robber: Robber[];
+  troublemaker: Troublemaker[];
   villagers: Villager[];
 }
 
@@ -117,7 +117,6 @@ export interface GameMove<MoveType> {
 // Werewolf's Move
 export interface WerewolfMove extends GameMove<'WerewolfMove'> {
   targetPlayerID: PlayerID;
-  targetPlayer2ID: PlayerID;
 }
 
 // SeerMove's Move
@@ -137,10 +136,35 @@ export interface TroublemakerMove extends GameMove<'TroubleMakerMove'> {
 }
 
 //  Villager's Move
-export interface TroublemakerMove extends GameMove<'TroubleMakerMove'> {
+export interface VillagerMove extends GameMove<'VillagerMove'> {
   targetPlayerID: PlayerID;
 }
 
+
+export type Werewolf = {
+  type: 'Werewolf';
+  name: string;
+};
+
+export type Seer = {
+  type: 'Seer';
+  name: string;
+}
+
+export type Robber = {
+  type: 'Robber';
+  name: string;
+}
+
+export type Troublemaker = {
+  type: 'TroubleMaker';
+  name: string;
+}
+
+export type Villager = {
+  type: 'Villager';
+  name: string;
+}
 
 
 
