@@ -510,7 +510,6 @@
                  "y":1028.66683333333
                 }, 
                 {
-                 "type":"GameArea",
                  "height":223.999666666667,
                  "id":30,
                  "name":"One Night Werewolf",
@@ -521,6 +520,7 @@
                       "value":"OneNightWerewolf"
                      }],
                  "rotation":0,
+                 "type": "GameArea",
                  "visible":true,
                  "width":164.667,
                  "x":3260.99983333333,
