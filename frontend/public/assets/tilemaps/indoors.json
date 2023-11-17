@@ -510,7 +510,7 @@
                  "y":1028.66683333333
                 }, 
                 {
-                 "type":"ConversationArea",
+                 "type":"GameArea",
                  "height":223.999666666667,
                  "id":30,
                  "name":"One Night Werewolf",

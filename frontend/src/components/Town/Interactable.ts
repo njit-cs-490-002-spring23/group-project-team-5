@@ -61,6 +61,7 @@ export default abstract class Interactable extends Phaser.GameObjects.Sprite {
    */
   addedToScene(): void {
     super.addedToScene();
+    this.townController = (this.scene as TownGameScene).coveyTownController;
     this._id = this.name;
     const sprite = this.townController.ourPlayer.gameObjects?.sprite;
     if (!sprite) {

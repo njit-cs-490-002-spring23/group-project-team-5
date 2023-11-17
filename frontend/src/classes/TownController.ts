@@ -26,7 +26,7 @@ import {
   TownSettingsUpdate,
   ViewingArea as ViewingAreaModel,
 } from '../types/CoveyTownSocket';
-import { isConversationArea, /* isTicTacToeArea ,*/ isViewingArea } from '../types/TypeUtils';
+import { isConversationArea, /* isTicTacToeArea, */ isViewingArea } from '../types/TypeUtils';
 import ConversationAreaController from './interactable/ConversationAreaController';
 import GameAreaController, { GameEventTypes } from './interactable/GameAreaController';
 import InteractableAreaController, {
@@ -601,11 +601,11 @@ export default class TownController extends (EventEmitter as new () => TypedEmit
             );
           } else if (isViewingArea(eachInteractable)) {
             this._interactableControllers.push(new ViewingAreaController(eachInteractable));
-          } /* else if (isTicTacToeArea(eachInteractable)) {
+          } else if (isTicTacToeArea(eachInteractable)) {
             this._interactableControllers.push(
               new TicTacToeAreaController(eachInteractable.id, eachInteractable, this),
             );
-          } */
+          }
         });
         this._userID = initialData.userID;
         this._ourPlayer = this.players.find(eachPlayer => eachPlayer.id == this.userID);
