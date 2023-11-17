@@ -514,6 +514,12 @@
                  "height":223.999666666667,
                  "id":30,
                  "name":"One Night Werewolf",
+                 "properties":[
+                     {
+                      "name":"type",
+                      "type":"string",
+                      "value":"OneNightWerewolf"
+                     }],
                  "rotation":0,
                  "visible":true,
                  "width":164.667,

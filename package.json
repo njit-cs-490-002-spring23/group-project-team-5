@@ -50,6 +50,11 @@
         "frontend/src/classes/ConversationAreaController.test.ts",
         "frontend/src/classes/ViewingAreaController.ts",
         "frontend/src/classes/ViewingAreaController.test.ts",
-        "frontend/src/components/Town/interactables/ViewingAreaVideo.tsx"
+        "frontend/src/components/Town/interactables/ViewingAreaVideo.tsx",
+        "frontend/src/classes/interactable/ONWAreaController.ts",
+        "frontend/src/classes/interactable/ONWAreaController.test.ts",
+        "frontend/src/components/Town/interactables/ONW/ONWArea.tsx",
+        "frontend/src/components/Town/interactables/ONW/ONWBoard.tsx",
+        "frontend/src/components/Town/interactables/Leaderboard.tsx"
     ]
 }
