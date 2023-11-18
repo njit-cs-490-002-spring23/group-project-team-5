@@ -192,8 +192,7 @@ function ONWArea({ interactableID }: { interactableID: InteractableID }): JSX.El
       </Accordion>
       {gameStatusText}
       <List aria-label='list of players in the game'>
-        <ListItem>X: {x?.userName || '(No player yet!)'}</ListItem>
-        <ListItem>O: {o?.userName || '(No player yet!)'}</ListItem>
+        <ListItem>Insert Players Here</ListItem>
       </List>
       <ONWBoard gameAreaController={gameAreaController} />
     </Container>
@@ -217,7 +216,7 @@ export default function ONWAreaWrapper(): JSX.Element {
     }
   }, [townController, gameArea]);
 
-  if (gameArea && gameArea.getData('type') === 'ONW') {
+  if (gameArea && gameArea.getData('type') === 'OneNightWerewolf') {
     return (
       <Modal isOpen={true} onClose={closeModal} closeOnOverlayClick={false}>
         <ModalOverlay />
