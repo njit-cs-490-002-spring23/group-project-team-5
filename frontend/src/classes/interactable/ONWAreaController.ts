@@ -1,10 +1,5 @@
 import _ from 'lodash';
-import {
-  GameArea,
-  GameStatus,
-  ONWGameState,
-  ONWGridPosition,
-} from '../../types/CoveyTownSocket';
+import { GameArea, GameStatus, ONWGameState, ONWGridPosition } from '../../types/CoveyTownSocket';
 import PlayerController from '../PlayerController';
 import GameAreaController, { GameEventTypes } from './GameAreaController';
 
@@ -21,10 +16,7 @@ export type ONWEvents = GameEventTypes & {
 /**
  * This class is responsible for managing the state of the Tic Tac Toe game, and for sending commands to the server
  */
-export default class ONWAreaController extends GameAreaController<
-  ONWGameState,
-  ONWEvents
-> {
+export default class ONWAreaController extends GameAreaController<ONWGameState, ONWEvents> {
   protected _board: ONWCell[][] = [
     [undefined, undefined, undefined],
     [undefined, undefined, undefined],

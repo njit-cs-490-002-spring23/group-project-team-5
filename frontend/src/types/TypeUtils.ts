@@ -20,9 +20,6 @@ export function isViewingArea(interactable: Interactable): interactable is Viewi
   return interactable.type === 'ViewingArea';
 }
 
-
-export function isONWArea(
-  interactable: Interactable,
-): interactable is GameArea<ONWGameState> {
+export function isONWArea(interactable: Interactable): interactable is GameArea<ONWGameState> {
   return interactable.type === 'ONWArea';
 }

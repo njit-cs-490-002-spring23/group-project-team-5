@@ -68,7 +68,9 @@ function ONWArea({ interactableID }: { interactableID: InteractableID }): JSX.El
   const [moveCount, setMoveCount] = useState<number>(gameAreaController.moveCount);
   const [observers, setObservers] = useState<PlayerController[]>(gameAreaController.observers);
   const [joiningGame, setJoiningGame] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [x, setX] = useState<PlayerController | undefined>(gameAreaController.x);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [o, setO] = useState<PlayerController | undefined>(gameAreaController.o);
   const toast = useToast();
 
