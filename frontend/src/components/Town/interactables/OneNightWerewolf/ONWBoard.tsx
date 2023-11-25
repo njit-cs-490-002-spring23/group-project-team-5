@@ -12,5 +12,5 @@ export type ONWGameProps = {
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export default function ONWBoard({ gameAreaController }: ONWGameProps): JSX.Element {
   // eslint-disable-next-line react/react-in-jsx-scope
-  return <h1>Hello</h1>;
+  return <h1>This will be the board</h1>;
 }

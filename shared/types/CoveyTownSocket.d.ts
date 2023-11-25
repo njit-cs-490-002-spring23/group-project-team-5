@@ -103,20 +103,20 @@ export type ONWGridPosition = 0 | 1 | 2;
  * Type for a move in ONW
  */
 export interface ONWMove {
-  gamePiece: 'X' | 'O';
+  gamePiece: 'player1' | 'O';
   row: ONWGridPosition;
   col: ONWGridPosition;
 }
 
 /**
  * Type for the state of a ONW game
- * The state of the game is represented as a list of moves, and the playerIDs of the players (x and o)
- * The first player to join the game is x, the second is o
+ * The state of the game is represented as a list of moves, and the playerIDs of the players (player 1-5)
+ * The players will be assigned in cronological order
  */
 export interface ONWGameState extends WinnableGameState {
   moves: ReadonlyArray<ONWMove>;
-  x?: PlayerID;
-  o?: PlayerID;
+  player1?: PlayerID;
+  player2?: PlayerID;
 }
 
 export type InteractableID = string;

@@ -7,7 +7,7 @@ export const PLAYER_NOT_IN_GAME_ERROR = 'Player is not in game';
 
 export const NO_GAME_IN_PROGRESS_ERROR = 'No game in progress';
 
-export type ONWCell = 'X' | 'O' | undefined;
+export type ONWCell = 'player1' | 'player2' | undefined;
 export type ONWEvents = GameEventTypes & {
   boardChanged: (board: ONWCell[][]) => void;
   turnChanged: (isOurTurn: boolean) => void;
@@ -26,7 +26,7 @@ export default class ONWAreaController extends GameAreaController<ONWGameState, 
   /**
    * Returns the current state of the board.
    *
-   * The board is a 3x3 array of ONWCell, which is either 'X', 'O', or undefined.
+   * The board is a 3x3 array of ONWCell, which is either 'player1', 'player2', or undefined.
    *
    * The 2-dimensional array is indexed by row and then column, so board[0][0] is the top-left cell,
    * and board[2][2] is the bottom-right cell
@@ -36,21 +36,21 @@ export default class ONWAreaController extends GameAreaController<ONWGameState, 
   }
 
   /**
-   * Returns the player with the 'X' game piece, if there is one, or undefined otherwise
+   * Returns the player with the 'Player1' game piece, if there is one, or undefined otherwise
    */
-  get x(): PlayerController | undefined {
-    const x = this._model.game?.state.x;
-    if (x) {
-      return this.occupants.find(eachOccupant => eachOccupant.id === x);
+  get player1(): PlayerController | undefined {
+    const player1 = this._model.game?.state.player1;
+    if (player1) {
+      return this.occupants.find(eachOccupant => eachOccupant.id === player1);
     }
     return undefined;
   }
 
   /**
-   * Returns the player with the 'O' game piece, if there is one, or undefined otherwise
+   * Returns the player with the 'player2' game piece, if there is one, or undefined otherwise
    */
-  get o(): PlayerController | undefined {
-    const o = this._model.game?.state.o;
+  get player2(): PlayerController | undefined {
+    const o = this._model.game?.state.player2;
     if (o) {
       return this.occupants.find(eachOccupant => eachOccupant.id === o);
     }
@@ -80,13 +80,13 @@ export default class ONWAreaController extends GameAreaController<ONWGameState, 
    * Returns undefined if the game is not in progress
    */
   get whoseTurn(): PlayerController | undefined {
-    const x = this.x;
-    const o = this.o;
-    if (!x || !o || this._model.game?.state.status !== 'IN_PROGRESS') {
+    const player1 = this.player1;
+    const o = this.player2;
+    if (!player1 || !o || this._model.game?.state.status !== 'IN_PROGRESS') {
       return undefined;
     }
     if (this.moveCount % 2 === 0) {
-      return x;
+      return player1;
     } else if (this.moveCount % 2 === 1) {
       return o;
     } else {
@@ -110,11 +110,11 @@ export default class ONWAreaController extends GameAreaController<ONWGameState, 
    *
    * Throws an error PLAYER_NOT_IN_GAME_ERROR if the current player is not a player in this game
    */
-  get gamePiece(): 'X' | 'O' {
-    if (this.x?.id === this._townController.ourPlayer.id) {
-      return 'X';
-    } else if (this.o?.id === this._townController.ourPlayer.id) {
-      return 'O';
+  get gamePiece(): 'player1' | 'player2' {
+    if (this.player1?.id === this._townController.ourPlayer.id) {
+      return 'player1';
+    } else if (this.player2?.id === this._townController.ourPlayer.id) {
+      return 'player2';
     }
     throw new Error(PLAYER_NOT_IN_GAME_ERROR);
   }

@@ -40,9 +40,9 @@ import ONWBoard from './ONWBoard';
  * It renders the following:
  * - A leaderboard (@see Leaderboard.tsx), which is passed the game history as a prop
  * - A list of observers' usernames (in a list with the aria-label 'list of observers in the game', one username per-listitem)
- * - A list of players' usernames (in a list with the aria-label 'list of players in the game', one item for X and one for O)
- *    - If there is no player in the game, the username is '(No player yet!)'
- *    - List the players as (exactly) `X: ${username}` and `O: ${username}`
+ * - A list of players' usernames (in a list with the aria-label 'list of players in the game', % items for each player
+ *    - If there is no player in the game, the username is '(No player n yet!)'
+ *    - List the players as (exactly) `Player n: ${username}` n is a number less than or equal to 5
  * - A message indicating the current game status:
  *    - If the game is in progress, the message is 'Game in progress, {moveCount} moves in, currently {whoseTurn}'s turn'. If it is currently our player's turn, the message is 'Game in progress, {moveCount} moves in, currently your turn'
  *    - Otherwise the message is 'Game {not yet started | over}.'
@@ -68,10 +68,13 @@ function ONWArea({ interactableID }: { interactableID: InteractableID }): JSX.El
   const [moveCount, setMoveCount] = useState<number>(gameAreaController.moveCount);
   const [observers, setObservers] = useState<PlayerController[]>(gameAreaController.observers);
   const [joiningGame, setJoiningGame] = useState(false);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [x, setX] = useState<PlayerController | undefined>(gameAreaController.x);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [o, setO] = useState<PlayerController | undefined>(gameAreaController.o);
+  const [player1, setPlayer1] = useState<PlayerController | undefined>(gameAreaController.player1);
+  const [player2, setPlayer2] = useState<PlayerController | undefined>(gameAreaController.player2);
+  /*
+  const [player3, setPlayer3] = useState<PlayerController | undefined>(gameAreaController.player3);
+  const [player4, setPlayer4] = useState<PlayerController | undefined>(gameAreaController.player4);
+  const [player5, setPlayer5] = useState<PlayerController | undefined>(gameAreaController.player5);
+  */
   const toast = useToast();
 
   useEffect(() => {
@@ -80,8 +83,13 @@ function ONWArea({ interactableID }: { interactableID: InteractableID }): JSX.El
       setGameStatus(gameAreaController.status || 'WAITING_TO_START');
       setMoveCount(gameAreaController.moveCount || 0);
       setObservers(gameAreaController.observers);
-      setX(gameAreaController.x);
-      setO(gameAreaController.o);
+      setPlayer1(gameAreaController.player1);
+      setPlayer2(gameAreaController.player2);
+      /*
+      setPlayer3(gameAreaController.player3);
+      setPlayer4(gameAreaController.player4);
+      setPlayer5(gameAreaController.player5);
+      */
     };
     gameAreaController.addListener('gameUpdated', updateGameState);
     const onGameEnd = () => {
@@ -194,7 +202,11 @@ function ONWArea({ interactableID }: { interactableID: InteractableID }): JSX.El
       </Accordion>
       {gameStatusText}
       <List aria-label='list of players in the game'>
-        <ListItem>Insert Players Here</ListItem>
+        <ListItem>Player 1: {player1?.userName || '(No Player 1 yet!)'}</ListItem>
+        <ListItem>Player 2: {player2?.userName || '(No Player 2 yet!)'}</ListItem>
+        <ListItem>Player 3: {player1?.userName || '(No Player 3 yet!)'}</ListItem>
+        <ListItem>Player 4: {player2?.userName || '(No Player 4 yet!)'}</ListItem>
+        <ListItem>Player 5: {player1?.userName || '(No Player 5 yet!)'}</ListItem>
       </List>
       <ONWBoard gameAreaController={gameAreaController} />
     </Container>
