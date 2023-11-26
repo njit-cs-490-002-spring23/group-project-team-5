@@ -64,7 +64,6 @@ function ONWArea({ interactableID }: { interactableID: InteractableID }): JSX.El
   const [gameStatus, setGameStatus] = useState<GameStatus>(gameAreaController.status);
   const [observers, setObservers] = useState<PlayerController[]>(gameAreaController.observers);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [moveCount, setMoveCount] = useState<number>(gameAreaController.moveCount);
   const [joiningGame, setJoiningGame] = useState(false);
   const [player1, setPlayer1] = useState<PlayerController | undefined>(gameAreaController.player1);
   const [player2, setPlayer2] = useState<PlayerController | undefined>(gameAreaController.player2);
@@ -77,7 +76,6 @@ function ONWArea({ interactableID }: { interactableID: InteractableID }): JSX.El
     const updateGameState = () => {
       setHistory(gameAreaController.history);
       setGameStatus(gameAreaController.status || 'WAITING_TO_START');
-      setMoveCount(gameAreaController.moveCount || 0);
       setObservers(gameAreaController.observers);
       setPlayer1(gameAreaController.player1);
       setPlayer2(gameAreaController.player2);
