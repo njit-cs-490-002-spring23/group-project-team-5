@@ -42,10 +42,7 @@ import ONWBoard from './ONWBoard';
  * - A list of observers' usernames (in a list with the aria-label 'list of observers in the game', one username per-listitem)
  * - A list of players' usernames (in a list with the aria-label 'list of players in the game', % items for each player
  *    - If there is no player in the game, the username is '(No player n yet!)'
- *    - List the players as (exactly) `Player n: ${username}` n is a number less than or equal to 5
- * - A message indicating the current game status:
- *    - If the game is in progress, the message is 'Game in progress, {moveCount} moves in, currently {whoseTurn}'s turn'. If it is currently our player's turn, the message is 'Game in progress, {moveCount} moves in, currently your turn'
- *    - Otherwise the message is 'Game {not yet started | over}.'
+ *    - List the players as (exactly) `Player n: ${username}` n is a number less than or equal to 5 based on the chronilogical order players o
  * - If the game is in status WAITING_TO_START or OVER, a button to join the game is displayed, with the text 'Join New Game'
  *    - Clicking the button calls the joinGame method on the gameAreaController
  *    - Before calling joinGame method, the button is disabled and has the property isLoading set to true, and is re-enabled when the method call completes
@@ -65,8 +62,9 @@ function ONWArea({ interactableID }: { interactableID: InteractableID }): JSX.El
 
   const [history, setHistory] = useState<GameResult[]>(gameAreaController.history);
   const [gameStatus, setGameStatus] = useState<GameStatus>(gameAreaController.status);
-  const [moveCount, setMoveCount] = useState<number>(gameAreaController.moveCount);
   const [observers, setObservers] = useState<PlayerController[]>(gameAreaController.observers);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [moveCount, setMoveCount] = useState<number>(gameAreaController.moveCount);
   const [joiningGame, setJoiningGame] = useState(false);
   const [player1, setPlayer1] = useState<PlayerController | undefined>(gameAreaController.player1);
   const [player2, setPlayer2] = useState<PlayerController | undefined>(gameAreaController.player2);
@@ -119,15 +117,7 @@ function ONWArea({ interactableID }: { interactableID: InteractableID }): JSX.El
 
   let gameStatusText = <></>;
   if (gameStatus === 'IN_PROGRESS') {
-    gameStatusText = (
-      <>
-        Game in progress, {moveCount} moves in, currently{' '}
-        {gameAreaController.whoseTurn === townController.ourPlayer
-          ? 'your'
-          : gameAreaController.whoseTurn?.userName + "'s"}{' '}
-        turn
-      </>
-    );
+    gameStatusText = <>Game in progress!</>;
   } else {
     let joinGameButton = <></>;
     if (

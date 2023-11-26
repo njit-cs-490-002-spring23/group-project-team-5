@@ -7,7 +7,7 @@ export const PLAYER_NOT_IN_GAME_ERROR = 'Player is not in game';
 
 export const NO_GAME_IN_PROGRESS_ERROR = 'No game in progress';
 
-export type ONWCell = 'player1' | 'player2' | undefined;
+export type ONWCell = 'player1' | 'player2' | 'player3' | 'player4' | 'player5' | undefined;
 export type ONWEvents = GameEventTypes & {
   boardChanged: (board: ONWCell[][]) => void;
   turnChanged: (isOurTurn: boolean) => void;
