@@ -192,7 +192,7 @@ function ONWArea({ interactableID }: { interactableID: InteractableID }): JSX.El
         <ListItem>Player 4: {player4?.userName || '(No Player 4 yet!)'}</ListItem>
         <ListItem>Player 5: {player5?.userName || '(No Player 5 yet!)'}</ListItem>
       </List>
-      <ONWBoard gameAreaController={gameAreaController} />
+      {gameStatus === 'IN_PROGRESS' && <ONWBoard gameAreaController={gameAreaController} />}
     </Container>
   );
 }
