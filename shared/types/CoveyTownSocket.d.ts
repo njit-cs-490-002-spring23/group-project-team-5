@@ -103,7 +103,7 @@ export type ONWGridPosition = 0 | 1 | 2;
  * Type for a move in ONW
  */
 export interface ONWMove {
-  gamePiece: 'player1' | 'O';
+  gamePiece: 'player1' | 'player2';
   row: ONWGridPosition;
   col: ONWGridPosition;
 }

@@ -29,16 +29,17 @@ export default class ONWGameArea extends GameArea<ONWGame> {
       // If we haven't yet recorded the outcome, do so now.
       const gameID = this._game?.id;
       if (gameID && !this._history.find(eachResult => eachResult.gameID === gameID)) {
-        const { player1, o: player2 } = updatedState.state;
+        const { player1, player2 } = updatedState.state;
         if (player1 && player2) {
-          const xName =
+          const player1Name =
             this._occupants.find(eachPlayer => eachPlayer.id === player1)?.userName || player1;
-          const oName = this._occupants.find(eachPlayer => eachPlayer.id === player2)?.userName || player2;
+          const player2Name =
+            this._occupants.find(eachPlayer => eachPlayer.id === player2)?.userName || player2;
           this._history.push({
             gameID,
             scores: {
-              [xName]: updatedState.state.winner === player1 ? 1 : 0,
-              [oName]: updatedState.state.winner === player2 ? 1 : 0,
+              [player1Name]: updatedState.state.winner === player1 ? 1 : 0,
+              [player2Name]: updatedState.state.winner === player2 ? 1 : 0,
             },
           });
         }

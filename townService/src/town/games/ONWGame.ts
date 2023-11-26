@@ -44,7 +44,7 @@ export default class ONWGame extends Game<ONWGameState, ONWMove> {
         this.state = {
           ...this.state,
           status: 'OVER',
-          winner: board[i][0] === 'player1' ? this.state.player1 : this.state.o,
+          winner: board[i][0] === 'player1' ? this.state.player1 : this.state.player2,
         };
         return;
       }
@@ -52,7 +52,7 @@ export default class ONWGame extends Game<ONWGameState, ONWMove> {
         this.state = {
           ...this.state,
           status: 'OVER',
-          winner: board[0][i] === 'player1' ? this.state.player1 : this.state.o,
+          winner: board[0][i] === 'player1' ? this.state.player1 : this.state.player2,
         };
         return;
       }
@@ -62,7 +62,7 @@ export default class ONWGame extends Game<ONWGameState, ONWMove> {
       this.state = {
         ...this.state,
         status: 'OVER',
-        winner: board[0][0] === 'player1' ? this.state.player1 : this.state.o,
+        winner: board[0][0] === 'player1' ? this.state.player1 : this.state.player2,
       };
       return;
     }
@@ -71,7 +71,7 @@ export default class ONWGame extends Game<ONWGameState, ONWMove> {
       this.state = {
         ...this.state,
         status: 'OVER',
-        winner: board[0][2] === 'player1' ? this.state.player1 : this.state.o,
+        winner: board[0][2] === 'player1' ? this.state.player1 : this.state.player2,
       };
       return;
     }
@@ -96,7 +96,7 @@ export default class ONWGame extends Game<ONWGameState, ONWMove> {
     // A move is only valid if it is the player's turn
     if (move.gamePiece === 'player1' && this.state.moves.length % 2 === 1) {
       throw new InvalidParametersError(MOVE_NOT_YOUR_TURN_MESSAGE);
-    } else if (move.gamePiece === 'O' && this.state.moves.length % 2 === 0) {
+    } else if (move.gamePiece === 'player2' && this.state.moves.length % 2 === 0) {
       throw new InvalidParametersError(MOVE_NOT_YOUR_TURN_MESSAGE);
     }
     // A move is valid only if game is in progress
@@ -135,11 +135,11 @@ export default class ONWGame extends Game<ONWGameState, ONWMove> {
    * @throws InvalidParametersError if the move is invalid
    */
   public applyMove(move: GameMove<ONWMove>): void {
-    let gamePiece: 'player1' | 'O';
+    let gamePiece: 'player1' | 'player2';
     if (move.playerID === this.state.player1) {
       gamePiece = 'player1';
     } else {
-      gamePiece = 'O';
+      gamePiece = 'player2';
     }
     const cleanMove = {
       gamePiece,
@@ -160,7 +160,7 @@ export default class ONWGame extends Game<ONWGameState, ONWMove> {
    *  or the game is full (GAME_FULL_MESSAGE)
    */
   protected _join(player: Player): void {
-    if (this.state.player1 === player.id || this.state.o === player.id) {
+    if (this.state.player1 === player.id || this.state.player2 === player.id) {
       throw new InvalidParametersError(PLAYER_ALREADY_IN_GAME_MESSAGE);
     }
     if (!this.state.player1) {
@@ -168,15 +168,15 @@ export default class ONWGame extends Game<ONWGameState, ONWMove> {
         ...this.state,
         player1: player.id,
       };
-    } else if (!this.state.o) {
+    } else if (!this.state.player2) {
       this.state = {
         ...this.state,
-        o: player.id,
+        player2: player.id,
       };
     } else {
       throw new InvalidParametersError(GAME_FULL_MESSAGE);
     }
-    if (this.state.player1 && this.state.o) {
+    if (this.state.player1 && this.state.player2) {
       this.state = {
         ...this.state,
         status: 'IN_PROGRESS',
@@ -196,11 +196,11 @@ export default class ONWGame extends Game<ONWGameState, ONWMove> {
    * @throws InvalidParametersError if the player is not in the game (PLAYER_NOT_IN_GAME_MESSAGE)
    */
   protected _leave(player: Player): void {
-    if (this.state.player1 !== player.id && this.state.o !== player.id) {
+    if (this.state.player1 !== player.id && this.state.player2 !== player.id) {
       throw new InvalidParametersError(PLAYER_NOT_IN_GAME_MESSAGE);
     }
     // Handles case where the game has not started yet
-    if (this.state.o === undefined) {
+    if (this.state.player2 === undefined) {
       this.state = {
         moves: [],
         status: 'WAITING_TO_START',
@@ -211,7 +211,7 @@ export default class ONWGame extends Game<ONWGameState, ONWMove> {
       this.state = {
         ...this.state,
         status: 'OVER',
-        winner: this.state.o,
+        winner: this.state.player2,
       };
     } else {
       this.state = {
