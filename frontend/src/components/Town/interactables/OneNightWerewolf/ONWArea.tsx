@@ -70,11 +70,9 @@ function ONWArea({ interactableID }: { interactableID: InteractableID }): JSX.El
   const [joiningGame, setJoiningGame] = useState(false);
   const [player1, setPlayer1] = useState<PlayerController | undefined>(gameAreaController.player1);
   const [player2, setPlayer2] = useState<PlayerController | undefined>(gameAreaController.player2);
-  /*
   const [player3, setPlayer3] = useState<PlayerController | undefined>(gameAreaController.player3);
   const [player4, setPlayer4] = useState<PlayerController | undefined>(gameAreaController.player4);
   const [player5, setPlayer5] = useState<PlayerController | undefined>(gameAreaController.player5);
-  */
   const toast = useToast();
 
   useEffect(() => {
@@ -85,11 +83,9 @@ function ONWArea({ interactableID }: { interactableID: InteractableID }): JSX.El
       setObservers(gameAreaController.observers);
       setPlayer1(gameAreaController.player1);
       setPlayer2(gameAreaController.player2);
-      /*
       setPlayer3(gameAreaController.player3);
       setPlayer4(gameAreaController.player4);
       setPlayer5(gameAreaController.player5);
-      */
     };
     gameAreaController.addListener('gameUpdated', updateGameState);
     const onGameEnd = () => {
@@ -204,9 +200,9 @@ function ONWArea({ interactableID }: { interactableID: InteractableID }): JSX.El
       <List aria-label='list of players in the game'>
         <ListItem>Player 1: {player1?.userName || '(No Player 1 yet!)'}</ListItem>
         <ListItem>Player 2: {player2?.userName || '(No Player 2 yet!)'}</ListItem>
-        <ListItem>Player 3: {player1?.userName || '(No Player 3 yet!)'}</ListItem>
-        <ListItem>Player 4: {player2?.userName || '(No Player 4 yet!)'}</ListItem>
-        <ListItem>Player 5: {player1?.userName || '(No Player 5 yet!)'}</ListItem>
+        <ListItem>Player 3: {player3?.userName || '(No Player 3 yet!)'}</ListItem>
+        <ListItem>Player 4: {player4?.userName || '(No Player 4 yet!)'}</ListItem>
+        <ListItem>Player 5: {player5?.userName || '(No Player 5 yet!)'}</ListItem>
       </List>
       <ONWBoard gameAreaController={gameAreaController} />
     </Container>

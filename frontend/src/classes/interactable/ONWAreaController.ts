@@ -50,9 +50,42 @@ export default class ONWAreaController extends GameAreaController<ONWGameState, 
    * Returns the player with the 'player2' game piece, if there is one, or undefined otherwise
    */
   get player2(): PlayerController | undefined {
-    const o = this._model.game?.state.player2;
-    if (o) {
-      return this.occupants.find(eachOccupant => eachOccupant.id === o);
+    const player2 = this._model.game?.state.player2;
+    if (player2) {
+      return this.occupants.find(eachOccupant => eachOccupant.id === player2);
+    }
+    return undefined;
+  }
+
+  /**
+   * Returns the player with the 'player3' game piece, if there is one, or undefined otherwise
+   */
+  get player3(): PlayerController | undefined {
+    const player3 = this._model.game?.state.player3;
+    if (player3) {
+      return this.occupants.find(eachOccupant => eachOccupant.id === player3);
+    }
+    return undefined;
+  }
+
+  /**
+   * Returns the player with the 'player4' game piece, if there is one, or undefined otherwise
+   */
+  get player4(): PlayerController | undefined {
+    const player4 = this._model.game?.state.player4;
+    if (player4) {
+      return this.occupants.find(eachOccupant => eachOccupant.id === player4);
+    }
+    return undefined;
+  }
+
+  /**
+   * Returns the player with the 'player5' game piece, if there is one, or undefined otherwise
+   */
+  get player5(): PlayerController | undefined {
+    const player5 = this._model.game?.state.player5;
+    if (player5) {
+      return this.occupants.find(eachOccupant => eachOccupant.id === player5);
     }
     return undefined;
   }
@@ -81,14 +114,14 @@ export default class ONWAreaController extends GameAreaController<ONWGameState, 
    */
   get whoseTurn(): PlayerController | undefined {
     const player1 = this.player1;
-    const o = this.player2;
-    if (!player1 || !o || this._model.game?.state.status !== 'IN_PROGRESS') {
+    const player2 = this.player2;
+    if (!player1 || !player2 || this._model.game?.state.status !== 'IN_PROGRESS') {
       return undefined;
     }
     if (this.moveCount % 2 === 0) {
       return player1;
     } else if (this.moveCount % 2 === 1) {
-      return o;
+      return player2;
     } else {
       throw new Error('Invalid move count');
     }
@@ -110,10 +143,16 @@ export default class ONWAreaController extends GameAreaController<ONWGameState, 
    *
    * Throws an error PLAYER_NOT_IN_GAME_ERROR if the current player is not a player in this game
    */
-  get gamePiece(): 'player1' | 'player2' {
+  get gamePiece(): 'player1' | 'player2' | 'player3' | 'player4' | 'player5' {
     if (this.player1?.id === this._townController.ourPlayer.id) {
       return 'player1';
     } else if (this.player2?.id === this._townController.ourPlayer.id) {
+      return 'player2';
+    } else if (this.player3?.id === this._townController.ourPlayer.id) {
+      return 'player2';
+    } else if (this.player4?.id === this._townController.ourPlayer.id) {
+      return 'player2';
+    } else if (this.player5?.id === this._townController.ourPlayer.id) {
       return 'player2';
     }
     throw new Error(PLAYER_NOT_IN_GAME_ERROR);

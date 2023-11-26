@@ -153,14 +153,20 @@ export default class ONWGame extends Game<ONWGameState, ONWMove> {
   /**
    * Adds a player to the game.
    * Updates the game's state to reflect the new player.
-   * If the game is now full (has two players), updates the game's state to set the status to IN_PROGRESS.
+   * If the game is now full (has five players), updates the game's state to set the status to IN_PROGRESS.
    *
    * @param player The player to join the game
    * @throws InvalidParametersError if the player is already in the game (PLAYER_ALREADY_IN_GAME_MESSAGE)
    *  or the game is full (GAME_FULL_MESSAGE)
    */
   protected _join(player: Player): void {
-    if (this.state.player1 === player.id || this.state.player2 === player.id) {
+    if (
+      this.state.player1 === player.id ||
+      this.state.player2 === player.id ||
+      this.state.player3 === player.id ||
+      this.state.player4 === player.id ||
+      this.state.player5 === player.id
+    ) {
       throw new InvalidParametersError(PLAYER_ALREADY_IN_GAME_MESSAGE);
     }
     if (!this.state.player1) {
@@ -173,10 +179,31 @@ export default class ONWGame extends Game<ONWGameState, ONWMove> {
         ...this.state,
         player2: player.id,
       };
+    } else if (!this.state.player3) {
+      this.state = {
+        ...this.state,
+        player3: player.id,
+      };
+    } else if (!this.state.player4) {
+      this.state = {
+        ...this.state,
+        player4: player.id,
+      };
+    } else if (!this.state.player5) {
+      this.state = {
+        ...this.state,
+        player5: player.id,
+      };
     } else {
       throw new InvalidParametersError(GAME_FULL_MESSAGE);
     }
-    if (this.state.player1 && this.state.player2) {
+    if (
+      this.state.player1 &&
+      this.state.player2 &&
+      this.state.player3 &&
+      this.state.player4 &&
+      this.state.player5
+    ) {
       this.state = {
         ...this.state,
         status: 'IN_PROGRESS',
@@ -196,17 +223,25 @@ export default class ONWGame extends Game<ONWGameState, ONWMove> {
    * @throws InvalidParametersError if the player is not in the game (PLAYER_NOT_IN_GAME_MESSAGE)
    */
   protected _leave(player: Player): void {
-    if (this.state.player1 !== player.id && this.state.player2 !== player.id) {
+    if (
+      this.state.player1 !== player.id &&
+      this.state.player2 !== player.id &&
+      this.state.player3 !== player.id &&
+      this.state.player4 !== player.id &&
+      this.state.player5 !== player.id
+    ) {
       throw new InvalidParametersError(PLAYER_NOT_IN_GAME_MESSAGE);
     }
     // Handles case where the game has not started yet
-    if (this.state.player2 === undefined) {
+    if (this.state.player5 === undefined) {
       this.state = {
         moves: [],
         status: 'WAITING_TO_START',
       };
-      return;
     }
+    /*
+
+    TODO: this is where we'd add if a player leaver mid game
     if (this.state.player1 === player.id) {
       this.state = {
         ...this.state,
@@ -219,6 +254,6 @@ export default class ONWGame extends Game<ONWGameState, ONWMove> {
         status: 'OVER',
         winner: this.state.player1,
       };
-    }
+    } */
   }
 }
