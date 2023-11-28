@@ -56,6 +56,27 @@ import ONWBoard from './ONWBoard';
  *    - Our player lost: description 'You lost :('
  *
  */
+
+const onwImage = {
+  backgroundImage: 'url("https://clan.akamai.steamstatic.com/images/5854753/b66553f114b91d1264e5323cc3262b1313f7cdde.jpg")',
+  backgroundSize: 'cover',
+  backgroundRepeat: 'no-repeat',
+  height: '23vh', 
+};
+
+const containerStyle = {
+  backgroundColor: '#f0f0f0',
+  padding: '20px',
+  display: 'flex',
+  flexDirection: 'column',
+  aligItems: 'center',
+  justifyContent: 'center'
+}
+
+const center = {
+  textAlign: 'center',
+}
+
 function ONWArea({ interactableID }: { interactableID: InteractableID }): JSX.Element {
   const gameAreaController = useInteractableAreaController<ONWAreaController>(interactableID);
   const townController = useTownController();
@@ -151,12 +172,16 @@ function ONWArea({ interactableID }: { interactableID: InteractableID }): JSX.El
   }
 
   return (
-    <Container>
+    
+    <Container style={containerStyle}>
+      <div style={onwImage}>
+
+      </div>
       <Accordion allowToggle>
         <AccordionItem>
           <Heading as='h3'>
             <AccordionButton>
-              <Box as='span' flex='1' textAlign='left'>
+              <Box as='span' flex='1' textAlign='center'>
                 Leaderboard
                 <AccordionIcon />
               </Box>
@@ -169,14 +194,14 @@ function ONWArea({ interactableID }: { interactableID: InteractableID }): JSX.El
         <AccordionItem>
           <Heading as='h3'>
             <AccordionButton>
-              <Box as='span' flex='1' textAlign='left'>
+              <Box as='span' flex='1' textAlign='center'>
                 Current Observers
                 <AccordionIcon />
               </Box>
             </AccordionButton>
           </Heading>
           <AccordionPanel>
-            <List aria-label='list of observers in the game'>
+            <List aria-label='list of observers in the game' textAlign='center'>
               {observers.map(player => {
                 return <ListItem key={player.id}>{player.userName}</ListItem>;
               })}
@@ -194,6 +219,7 @@ function ONWArea({ interactableID }: { interactableID: InteractableID }): JSX.El
       </List>
       {gameStatus === 'IN_PROGRESS' && <ONWBoard gameAreaController={gameAreaController} />}
     </Container>
+    
   );
 }
 
@@ -217,12 +243,14 @@ export default function ONWAreaWrapper(): JSX.Element {
   if (gameArea && gameArea.getData('type') === 'OneNightWerewolf') {
     return (
       <Modal isOpen={true} onClose={closeModal} closeOnOverlayClick={false}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>{gameArea.name}</ModalHeader>
-          <ModalCloseButton />
-          <ONWArea interactableID={gameArea.name} />;
-        </ModalContent>
+        <div>
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>{gameArea.name}</ModalHeader>
+            <ModalCloseButton />
+            <ONWArea interactableID={gameArea.name} />;
+          </ModalContent>
+        </div>
       </Modal>
     );
   }
