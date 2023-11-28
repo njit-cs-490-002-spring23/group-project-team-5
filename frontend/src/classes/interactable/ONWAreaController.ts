@@ -12,11 +12,43 @@ export const NO_GAME_IN_PROGRESS_ERROR = 'No game in progress';
 export type ONWCell = 'player1' | 'player2' | 'player3' | 'player4' | 'player5' | undefined;
 // eslint-disable-next-line @typescript-eslint/ban-types
 export type ONWEvents = GameEventTypes & {};
+export type ONWStatus = 'WELCOME_PLAYERS' | 'ROLE_ASSIGNMENT';
 
 /**
  * This class is responsible for managing the state of the One Night Werewolf Game, and for sending commands to the server
  */
 export default class ONWAreaController extends GameAreaController<ONWGameState, ONWEvents> {
+  // Returns the status the game is in. The initial status of the game will be "WELCOME_PLAYERS"
+  private _onwStatus: ONWStatus = 'WELCOME_PLAYERS';
+
+  /**
+   * Sets the status the of ONWGame
+   */
+  setONWStatus(status: ONWStatus): void {
+    this._onwStatus = status;
+    this.emit('onwStatusUpdated', status);
+  }
+
+  /**
+   * Sets the status the of ONW Game
+   */
+  get onwStatus(): ONWStatus {
+    return this._onwStatus;
+  }
+
+  /**
+   * Method to handle timing transitions (e.g., WELCOME_PLAYERS to ROLE_ASSIGNMENT)
+   */
+  private _handleTimingTransitions(): void {
+    if (this.isActive()) {
+      setTimeout(() => {
+        if (this._onwStatus === 'WELCOME_PLAYERS') {
+          this.setONWStatus('ROLE_ASSIGNMENT');
+        }
+      }, 5000); // 5 seconds
+    }
+  }
+
   /**
    * Returns the player with the 'Player1' game piece, if there is one, or undefined otherwise
    */

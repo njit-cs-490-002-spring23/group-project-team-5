@@ -9,8 +9,8 @@ import { GameMove, ONWGameState, ONWMove } from '../../types/CoveyTownSocket';
 import Game from './Game';
 
 /**
- * A ONWGame is a Game that implements the rules of Tic Tac Toe.
- * @see https://en.wikipedia.org/wiki/Tic-tac-toe
+ * A ONWGame is a Game that implements the rules of One Night Werewolf
+ * @see https://www.ultraboardgames.com/one-night-ultimate-werewolf/game-rules.php
  */
 export default class ONWGame extends Game<ONWGameState, ONWMove> {
   // eslint-disable-next-line class-methods-use-this
@@ -97,6 +97,7 @@ export default class ONWGame extends Game<ONWGameState, ONWMove> {
    * @throws InvalidParametersError if the player is not in the game (PLAYER_NOT_IN_GAME_MESSAGE)
    */
   protected _leave(player: Player): void {
+    // Check if the player is in the game, if you remove a player in the game throw an error
     if (
       this.state.player1 !== player.id &&
       this.state.player2 !== player.id &&
@@ -106,27 +107,43 @@ export default class ONWGame extends Game<ONWGameState, ONWMove> {
     ) {
       throw new InvalidParametersError(PLAYER_NOT_IN_GAME_MESSAGE);
     }
-    // Handles case where the game has not started yet
+    // handles case where the game has started, remain in WAITING_TO_START and reset all the players
     if (this.state.player5 === undefined) {
-      this.state = {
-        status: 'WAITING_TO_START',
-      };
+      if (
+        this.state.player1 !== player.id &&
+        this.state.player2 !== player.id &&
+        this.state.player3 !== player.id &&
+        this.state.player4 !== player.id &&
+        this.state.player5 !== player.id
+      ) {
+        this.state = {
+          status: 'WAITING_TO_START',
+          player1: undefined,
+          player2: undefined,
+          player3: undefined,
+          player4: undefined,
+          player5: undefined,
+        };
+      }
     }
-    /*
-
-    TODO: this is where we'd add if a player leaver mid game
-    if (this.state.player1 === player.id) {
-      this.state = {
-        ...this.state,
-        status: 'OVER',
-        winner: this.state.player2,
-      };
-    } else {
-      this.state = {
-        ...this.state,
-        status: 'OVER',
-        winner: this.state.player1,
-      };
-    } */
+    // handles case where the game has started, auto ends and reset all the players
+    if (this.state.player5 !== undefined) {
+      if (
+        this.state.player1 !== player.id &&
+        this.state.player2 !== player.id &&
+        this.state.player3 !== player.id &&
+        this.state.player4 !== player.id &&
+        this.state.player5 !== player.id
+      ) {
+        this.state = {
+          status: 'OVER',
+          player1: undefined,
+          player2: undefined,
+          player3: undefined,
+          player4: undefined,
+          player5: undefined,
+        };
+      }
+    }
   }
 }

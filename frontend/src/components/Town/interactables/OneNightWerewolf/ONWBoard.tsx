@@ -1,5 +1,5 @@
-// import { Button, chakra, Container, useToast } from '@chakra-ui/react';
-// import React, { useEffect, useState } from 'react';
+import { Container, Heading, Text } from '@chakra-ui/react';
+import React, { useEffect, useState } from 'react';
 import ONWAreaController from '../../../../classes/interactable/ONWAreaController';
 
 export type ONWGameProps = {
@@ -7,10 +7,52 @@ export type ONWGameProps = {
 };
 
 /**
- * An empty One Night Werewolf board
+ * One Night Werewolf board
  */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export default function ONWBoard({ gameAreaController }: ONWGameProps): JSX.Element {
-  // eslint-disable-next-line react/react-in-jsx-scope
-  return <h1>This will be the board</h1>;
+  const [gameStatusText, setGameStatusText] = useState<string>('');
+
+  useEffect(() => {
+    const handleStatusUpdate = (status: string) => {
+      if (status === 'WELCOME_PLAYERS') {
+        setGameStatusText('Welcome to the game!');
+      } else if (status === 'ROLE_ASSIGNMENT') {
+        setGameStatusText('The players are learning their roles.');
+      }
+      // Add more conditions for other states if needed
+    };
+
+    const handleGameStart = () => {
+      // Additional logic when the game starts
+    };
+
+    const handleRoleAssignment = () => {
+      // Additional logic when role assignment occurs
+    };
+
+    // Subscribe to events
+    gameAreaController.addListener('onwStatusUpdated', handleStatusUpdate);
+    gameAreaController.addListener('onwGameStart', handleGameStart);
+    gameAreaController.addListener('onwRoleAssignment', handleRoleAssignment);
+
+    // Cleanup event listeners on component unmount
+    return () => {
+      gameAreaController.removeListener('onwStatusUpdated', handleStatusUpdate);
+      gameAreaController.removeListener('onwGameStart', handleGameStart);
+      gameAreaController.removeListener('onwRoleAssignment', handleRoleAssignment);
+    };
+  }, [gameAreaController]);
+
+  return (
+    <Container maxW="xl" mt={8}>
+      <Heading as="h2" textAlign="center" mb={4}>
+        One Night Werewolf
+      </Heading>
+      <Text textAlign="center" fontSize="xl" mb={4}>
+        {gameStatusText}
+      </Text>
+      {/* Add more components or features as needed for your board */}
+    </Container>
+  );
+
 }
