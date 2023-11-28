@@ -510,11 +510,17 @@
                  "y":1028.66683333333
                 }, 
                 {
-                 "type":"ConversationArea",
                  "height":223.999666666667,
                  "id":30,
-                 "name":"Basement Dining Table 1",
+                 "name":"One Night Werewolf",
+                 "properties":[
+                     {
+                      "name":"type",
+                      "type":"string",
+                      "value":"OneNightWerewolf"
+                     }],
                  "rotation":0,
+                 "type": "GameArea",
                  "visible":true,
                  "width":164.667,
                  "x":3260.99983333333,
