@@ -97,24 +97,19 @@ export interface GameMove<MoveType> {
   move: MoveType;
 }
 
-export type ONWGridPosition = 0 | 1 | 2;
-
 /**
- * Type for a move in ONW
+ * Type for a move in ONW (not sure how to use this, maybe to vote?)
  */
 export interface ONWMove {
-  gamePiece: 'player1' | 'player2' | 'player3' | 'player4' |'player5';
-  row: ONWGridPosition;
-  col: ONWGridPosition;
+  gamePiece: 'player1' | 'player2' | 'player3' | 'player4' | 'player5';
 }
 
 /**
  * Type for the state of a ONW game
- * The state of the game is represented as a list of moves, and the playerIDs of the players (player 1-5)
+ * The state of the game is represented the playerIDs of the players (player 1-5)
  * The players will be assigned in cronological order
  */
 export interface ONWGameState extends WinnableGameState {
-  moves: ReadonlyArray<ONWMove>;
   player1?: PlayerID;
   player2?: PlayerID;
   player3?: PlayerID;
