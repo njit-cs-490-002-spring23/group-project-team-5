@@ -65,7 +65,7 @@ const onwImage = {
 };
 
 const containerStyle = {
-  backgroundColor: '#f0f0f0',
+  backgroundColor: '#fff8e3',
   padding: '20px',
   display: 'flex',
   flexDirection: 'column',
@@ -145,42 +145,59 @@ function ONWArea({ interactableID }: { interactableID: InteractableID }): JSX.El
     ) {
       joinGameButton = (
         <Button
-          onClick={async () => {
-            setJoiningGame(true);
-            try {
-              await gameAreaController.joinGame();
-            } catch (err) {
-              toast({
-                title: 'Error joining game',
-                description: (err as Error).toString(),
-                status: 'error',
-              });
-            }
-            setJoiningGame(false);
-          }}
-          isLoading={joiningGame}
-          disabled={joiningGame}>
-          Join New Game
+            onClick={async () => {
+              setJoiningGame(true);
+              try {
+                await gameAreaController.joinGame();
+              } catch (err) {
+                toast({
+              title: 'Error joining game',
+              description: (err as Error).toString(),
+              status: 'error',
+            });
+          }
+          setJoiningGame(false);
+            }}
+            isLoading={joiningGame}
+            disabled={joiningGame}
+            colorScheme="yellow" 
+            variant="solid" 
+            size="md" 
+            borderRadius="md" 
+            _hover={{ bg: 'yellow.500' }} 
+            _focus={{ boxShadow: 'outline' }} 
+          >
+            Join New Game
         </Button>
       );
     }
     gameStatusText = (
+      <Box>
       <b>
-        Game {gameStatus === 'WAITING_TO_START' ? 'not yet started' : 'over'}. {joinGameButton}
+        Game {gameStatus === 'WAITING_TO_START' ? 'not yet started' : 'over'}.
       </b>
+      <br></br><br></br>
+      {joinGameButton}
+    </Box>
     );
   }
 
   return (
     
     <Container style={containerStyle}>
+      <br></br>
       <div style={onwImage}>
 
       </div>
       <Accordion allowToggle>
         <AccordionItem>
-          <Heading as='h3'>
-            <AccordionButton>
+          <Heading as='h3' textAlign='center'>
+            <br></br>
+            <AccordionButton
+              _hover={{
+                backgroundColor: 'yellow.500',
+              }}
+            >
               <Box as='span' flex='1' textAlign='center'>
                 Leaderboard
                 <AccordionIcon />
@@ -193,7 +210,11 @@ function ONWArea({ interactableID }: { interactableID: InteractableID }): JSX.El
         </AccordionItem>
         <AccordionItem>
           <Heading as='h3'>
-            <AccordionButton>
+            <AccordionButton 
+              _hover={{
+                backgroundColor: 'yellow.500',
+              }}
+              >
               <Box as='span' flex='1' textAlign='center'>
                 Current Observers
                 <AccordionIcon />
@@ -209,8 +230,12 @@ function ONWArea({ interactableID }: { interactableID: InteractableID }): JSX.El
           </AccordionPanel>
         </AccordionItem>
       </Accordion>
-      {gameStatusText}
-      <List aria-label='list of players in the game'>
+      <br></br>
+      <Heading textAlign='center' fontSize='20px'>
+        {gameStatusText}
+      </Heading>
+      <br></br>
+      <List aria-label='list of players in the game' textAlign='center'>
         <ListItem>Player 1: {player1?.userName || '(No Player 1 yet!)'}</ListItem>
         <ListItem>Player 2: {player2?.userName || '(No Player 2 yet!)'}</ListItem>
         <ListItem>Player 3: {player3?.userName || '(No Player 3 yet!)'}</ListItem>
