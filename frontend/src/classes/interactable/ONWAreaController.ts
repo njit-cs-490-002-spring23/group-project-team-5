@@ -11,7 +11,12 @@ export const NO_GAME_IN_PROGRESS_ERROR = 'No game in progress';
 
 export type ONWCell = 'player1' | 'player2' | 'player3' | 'player4' | 'player5' | undefined;
 // eslint-disable-next-line @typescript-eslint/ban-types
-export type ONWEvents = GameEventTypes & {};
+export type ONWEvents = GameEventTypes & {
+  onwStatusUpdated: (status: ONWStatus) => void;
+  onwGameStart: () => void;
+  onwRoleAssignment: () => void;
+};
+
 export type ONWStatus = 'WELCOME_PLAYERS' | 'ROLE_ASSIGNMENT';
 
 /**
@@ -37,12 +42,27 @@ export default class ONWAreaController extends GameAreaController<ONWGameState, 
   }
 
   /**
+   * Returns true if the ONW game is currently in the "WELCOME_PLAYERS" state
+   */
+  public isWelcomePlayers(): boolean {
+    return this._onwStatus === 'WELCOME_PLAYERS';
+  }
+
+  /**
+   * Starts the ONW Game and emits the 'onwGameStart' event
+   */
+  startONWGame(): void {
+    this.setONWStatus('WELCOME_PLAYERS');
+    this.emit('onwGameStart');
+  }
+
+  /**
    * Method to handle timing transitions (e.g., WELCOME_PLAYERS to ROLE_ASSIGNMENT)
    */
-  private _handleTimingTransitions(): void {
-    if (this.isActive()) {
+  public handleTimingTransitions(): void {
+    if (this.isWelcomePlayers()) {
       setTimeout(() => {
-        if (this._onwStatus === 'WELCOME_PLAYERS') {
+        if (this.isWelcomePlayers()) {
           this.setONWStatus('ROLE_ASSIGNMENT');
         }
       }, 5000); // 5 seconds
@@ -133,11 +153,11 @@ export default class ONWAreaController extends GameAreaController<ONWGameState, 
     } else if (this.player2?.id === this._townController.ourPlayer.id) {
       return 'player2';
     } else if (this.player3?.id === this._townController.ourPlayer.id) {
-      return 'player2';
+      return 'player3';
     } else if (this.player4?.id === this._townController.ourPlayer.id) {
-      return 'player2';
+      return 'player4';
     } else if (this.player5?.id === this._townController.ourPlayer.id) {
-      return 'player2';
+      return 'player5';
     }
     throw new Error(PLAYER_NOT_IN_GAME_ERROR);
   }

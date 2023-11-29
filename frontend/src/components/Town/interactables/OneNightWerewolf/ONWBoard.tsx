@@ -8,6 +8,10 @@ export type ONWGameProps = {
 
 /**
  * One Night Werewolf board
+ * 
+ * Hope: I started testing timing. If the ONW event is at a certain status, a certain text will appear:
+ *  "WELCOME_PLAYERS" => "welcome to the game"
+ *  "ROLE_ASSIGNMENT" => "The players are learning their roles."
  */
 export default function ONWBoard({ gameAreaController }: ONWGameProps): JSX.Element {
   const [gameStatusText, setGameStatusText] = useState<string>('');
@@ -51,7 +55,6 @@ export default function ONWBoard({ gameAreaController }: ONWGameProps): JSX.Elem
       <Text textAlign="center" fontSize="xl" mb={4}>
         {gameStatusText}
       </Text>
-      {/* Add more components or features as needed for your board */}
     </Container>
   );
 
