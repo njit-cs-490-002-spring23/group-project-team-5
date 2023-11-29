@@ -1,0 +1,31 @@
+Hello from Ryan's remote machine
+
+Role Logic/Attributes Tree:
+
+Villager:
+    Night:
+        Action: None
+        Appearance To Seer: Not Werewolf
+        Immunity: None
+    Day:
+        Ability To Chat: Yes if alive
+        Ability To Talk: Yes if alive
+        Ability To Vote: Yes if alive
+Seer:
+    Night:
+        Action: Seer action
+        Appearance To Seer: Not Werewolf
+        Immunity: None
+    Day:
+        Ability To Chat: Yes if alive
+        Ability To Talk: Yes if alive
+        Ability To Vote: Yes if alive
+Werewolf:
+    Night:
+        Action: Werewolf Action
+        Appearance To Seer: Werewolf
+        Immunity: Immune
+    Day:
+        Ability To Chat: Yes if alive
+        Ability To Talk: Yes if alive
+        Ability To Vote: Yes if alive
