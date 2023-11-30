@@ -13,6 +13,10 @@ import Game from './Game';
  * @see https://www.ultraboardgames.com/one-night-ultimate-werewolf/game-rules.php
  */
 export default class ONWGame extends Game<ONWGameState, ONWMove> {
+
+  // Logging the votes
+  private _voteCount: Record<string, number> = {};
+
   // eslint-disable-next-line class-methods-use-this
   public applyMove(_move: GameMove<ONWMove>): void {
     throw new Error('Method not implemented.');
@@ -144,6 +148,107 @@ export default class ONWGame extends Game<ONWGameState, ONWMove> {
           player5: undefined,
         };
       }
+    }
+  }
+
+
+  /**
+   Check if player is in the game for voting logic
+   @param player The player to check
+   @returns True if the player is in the game, false otherwise
+  **/
+
+  private isPlayerInGame(player: Player): boolean {
+    return(
+      this.state.player1 === player.id ||
+      this.state.player2 === player.id ||
+      this.state.player3 === player.id ||
+      this.state.player4 === player.id ||
+      this.state.player5 === player.id 
+    )
+  }
+
+  /**
+   Get the list of players in the game.
+   
+   @returns An array of Player objects
+   **/
+   protected getPlayers(): Player[] {
+    const players: Player[] = [];
+    for (const playerID of [
+      this.state.player1,
+      this.state.player2,
+      this.state.player3,
+      this.state.player4,
+      this.state.player5,
+    ]) {
+      if (playerID) {
+        const player = this.getPlayerByID(playerID);
+        if (player) {
+          players.push(player);
+        }
+      }
+    }
+    return players;
+  }
+
+  /**
+   Get a player by their ID.
+   
+   @param playerID The ID of the player to retrieve
+   @returns The Player object if found, or undefined if not found
+   **/
+
+   protected getPlayerByID(playerID: string): Player | undefined {
+    return this.getPlayers().find(player => player.id === playerID);
+  }
+
+  /**
+   Handles a vote from a player to kick another player.
+   Updates the game state to refelct the vote
+   @param voter The player casting the vote
+   @param target The player being voted against
+   @throws InvalidParametersError if the voter or target is not in the game
+  **/
+   public handleVote(voter: Player, target: Player): void {
+    if (
+      !this.isPlayerInGame(voter) ||
+      !this.isPlayerInGame(target) ||
+      voter.id === target.id
+    ) {
+      throw new InvalidParametersError('Invalid vote parameters');
+    }
+
+    // Update the vote count for the target player
+    this._voteCount[target.id] = (this._voteCount[target.id] || 0) + 1;
+
+    if (Object.keys(this._voteCount).length === this.getPlayers().length) {
+      // Figuring out who has the most votes.
+      const playerWithMostVotes = Object.keys(this._voteCount).reduce(
+        (prevPlayer, currentPlayer) =>
+          this._voteCount[currentPlayer] > this._voteCount[prevPlayer]
+            ? currentPlayer
+            : prevPlayer,
+      );
+
+      this.handleVoteResult(playerWithMostVotes);
+
+      // Clearing the vote for next round
+      this._voteCount = {};
+    }
+  }
+
+
+  /**
+   * Handles the result of the vote.
+   *
+   * @param kickedPlayerID The ID of the player with the most votes
+   */
+  private handleVoteResult(kickedPlayerID: string): void {
+    // Kicking player based on # of votes.
+    const kickedPlayer = this.getPlayerByID(kickedPlayerID);
+    if (kickedPlayer) {
+      this.leave(kickedPlayer);
     }
   }
 }
