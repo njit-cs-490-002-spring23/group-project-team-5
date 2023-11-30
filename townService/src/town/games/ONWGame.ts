@@ -250,5 +250,6 @@ export default class ONWGame extends Game<ONWGameState, ONWMove> {
     if (kickedPlayer) {
       this.leave(kickedPlayer);
     }
+    
   }
 }
