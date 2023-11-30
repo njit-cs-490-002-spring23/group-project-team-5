@@ -158,7 +158,7 @@ export default class ONWGame extends Game<ONWGameState, ONWMove> {
    @returns True if the player is in the game, false otherwise
   **/
 
-  private isPlayerInGame(player: Player): boolean {
+  public isPlayerInGame(player: Player): boolean {
     return(
       this.state.player1 === player.id ||
       this.state.player2 === player.id ||
@@ -250,6 +250,6 @@ export default class ONWGame extends Game<ONWGameState, ONWMove> {
     if (kickedPlayer) {
       this.leave(kickedPlayer);
     }
-    
+
   }
 }
