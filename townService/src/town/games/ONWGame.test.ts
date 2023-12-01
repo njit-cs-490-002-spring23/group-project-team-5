@@ -335,6 +335,30 @@ describe('OneNightWerewolf', () => {
       })
     })
 
+    describe('getPlayerByID', () => {
+      it('should return the id of the player in string format', () => {
+        const player1 = createPlayerForTesting();
+        game.join(player1);
+
+        expect(game.state.player1).toEqual(player1.id);
+      });
+    })
+
+    describe('handleVote', () => {
+      it('should update the vote count and handle the vote result correctly', () =>{
+        const player1 = createPlayerForTesting();
+        const player2 = createPlayerForTesting();
+        game.join(player1);
+        game.join(player2);
+
+        // player2 votes player1
+        game.handleVote(player2,player1);
+
+        // player1 vote should be 1
+        expect(game.voteCount[player1.id]).toEqual(1);
+      })
+    })
+
 
     // it('should record the vote for the specified player', () => {
     //   //Creating players and making them join the game

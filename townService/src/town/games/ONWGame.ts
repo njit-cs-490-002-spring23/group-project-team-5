@@ -15,13 +15,13 @@ import Game from './Game';
 export default class ONWGame extends Game<ONWGameState, ONWMove> {
 
   // Holding the players in player's array object
-  private players: Player[] = [];
+  public players: Player[] = [];
 
   // Map to hold id as key and player as value
-  private playersMap: Record<string, Player> = {};
+  public playersMap: Record<string, Player> = {};
 
   // Logging the votes
-  private _voteCount: Record<string, number> = {};
+  public voteCount: Record<string, number> = {};
 
   // eslint-disable-next-line class-methods-use-this
   public applyMove(_move: GameMove<ONWMove>): void {
@@ -228,13 +228,13 @@ public getPlayerByID(playerID: string): Player | undefined {
     }
 
     // Update the vote count for the target player
-    this._voteCount[target.id] = (this._voteCount[target.id] || 0) + 1;
+    this.voteCount[target.id] = (this.voteCount[target.id] || 0) + 1;
 
-    if (Object.keys(this._voteCount).length === this.getPlayers().length) {
+    if (Object.keys(this.voteCount).length === this.getPlayers().length) {
       // Figuring out who has the most votes.
-      const playerWithMostVotes = Object.keys(this._voteCount).reduce(
+      const playerWithMostVotes = Object.keys(this.voteCount).reduce(
         (prevPlayer, currentPlayer) =>
-          this._voteCount[currentPlayer] > this._voteCount[prevPlayer]
+          this.voteCount[currentPlayer] > this.voteCount[prevPlayer]
             ? currentPlayer
             : prevPlayer,
       );
@@ -242,7 +242,7 @@ public getPlayerByID(playerID: string): Player | undefined {
       this.handleVoteResult(playerWithMostVotes);
 
       // Clearing the vote for next round
-      this._voteCount = {};
+      this.voteCount = {};
     }
   }
 
