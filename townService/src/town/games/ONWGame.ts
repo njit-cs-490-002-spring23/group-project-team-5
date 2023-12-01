@@ -14,6 +14,12 @@ import Game from './Game';
  */
 export default class ONWGame extends Game<ONWGameState, ONWMove> {
 
+  // Holding the players in player's array object
+  private players: Player[] = [];
+
+  // Map to hold id as key and player as value
+  private playersMap: Record<string, Player> = {};
+
   // Logging the votes
   private _voteCount: Record<string, number> = {};
 
@@ -48,26 +54,37 @@ export default class ONWGame extends Game<ONWGameState, ONWMove> {
       throw new InvalidParametersError(PLAYER_ALREADY_IN_GAME_MESSAGE);
     }
     if (!this.state.player1) {
+      this.players.push(player);
+      this.playersMap[player.id] = player;
       this.state = {
         ...this.state,
         player1: player.id,
+        
       };
     } else if (!this.state.player2) {
+      this.players.push(player);
+      this.playersMap[player.id] = player;
       this.state = {
         ...this.state,
         player2: player.id,
       };
     } else if (!this.state.player3) {
+      this.players.push(player);
+      this.playersMap[player.id] = player;
       this.state = {
         ...this.state,
         player3: player.id,
       };
     } else if (!this.state.player4) {
+      this.players.push(player);
+      this.playersMap[player.id] = player;
       this.state = {
         ...this.state,
         player4: player.id,
       };
     } else if (!this.state.player5) {
+      this.players.push(player);
+      this.playersMap[player.id] = player;
       this.state = {
         ...this.state,
         player5: player.id,
@@ -169,39 +186,30 @@ export default class ONWGame extends Game<ONWGameState, ONWMove> {
   }
 
   /**
-   Get the list of players in the game.
-   
-   @returns An array of Player objects
-   **/
-   protected getPlayers(): Player[] {
-    const players: Player[] = [];
-    for (const playerID of [
-      this.state.player1,
-      this.state.player2,
-      this.state.player3,
-      this.state.player4,
-      this.state.player5,
-    ]) {
-      if (playerID) {
-        const player = this.getPlayerByID(playerID);
-        if (player) {
-          players.push(player);
-        }
-      }
-    }
-    return players;
+ * Get the list of players in the game.
+ *
+ * @returns An array of Player objects
+ **/
+  public getPlayers(): Player[] {
+    return this.players;
   }
 
-  /**
-   Get a player by their ID.
-   
-   @param playerID The ID of the player to retrieve
-   @returns The Player object if found, or undefined if not found
-   **/
+/**
+ * Get a player by their ID.
+ *
+ * @param playerID The ID of the player to retrieve
+ * @returns The Player object if found, or undefined if not found
+ **/
+public getPlayerByID(playerID: string): Player | undefined {
+  return this.playersMap[playerID];
+}
 
-   protected getPlayerByID(playerID: string): Player | undefined {
-    return this.getPlayers().find(player => player.id === playerID);
-  }
+// private getPlayerByIDDirect(playerID: string): Player | undefined {
+//   // Access the state directly to avoid recursion
+//   return this.players.find(player => player.id === playerID);
+// }
+
+
 
   /**
    Handles a vote from a player to kick another player.

@@ -318,6 +318,23 @@ describe('OneNightWerewolf', () => {
       });
     });
 
+    describe('getPlayers', () => {
+      it('should return true an array of players', () => {
+        const player1 = createPlayerForTesting();
+        const player2 = createPlayerForTesting();
+        const player3 = createPlayerForTesting();
+        const player4 = createPlayerForTesting();
+        const player5 = createPlayerForTesting();
+        game.join(player1);
+        game.join(player2);
+        game.join(player3);
+        game.join(player4);
+        game.join(player5);
+        const players = game.getPlayers();
+        expect(players).toHaveLength(5);
+      })
+    })
+
 
     // it('should record the vote for the specified player', () => {
     //   //Creating players and making them join the game
