@@ -115,10 +115,20 @@ export interface ONWGameState extends WinnableGameState {
   player3?: PlayerID;
   player4?: PlayerID;
   player5?: PlayerID;
+  onwStatus?: ONWStatus;
 }
 
 export type InteractableID = string;
 export type GameInstanceID = string;
+
+
+export type ONWStatus = 'WELCOME_PLAYERS' | 'ROLE_ASSIGNMENT';
+/**
+ * Base type for the state of a game
+ */
+export interface ONWStatusState {
+  status: GameStatus;
+} 
 
 /**
  * Type for the result of a game

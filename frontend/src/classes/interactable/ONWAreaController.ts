@@ -1,7 +1,7 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import _ from 'lodash';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { GameArea, GameStatus, ONWGameState } from '../../types/CoveyTownSocket';
+import { GameArea, GameStatus, ONWGameState, ONWStatus } from '../../types/CoveyTownSocket';
 import PlayerController from '../PlayerController';
 import GameAreaController, { GameEventTypes } from './GameAreaController';
 
@@ -12,63 +12,13 @@ export const NO_GAME_IN_PROGRESS_ERROR = 'No game in progress';
 export type ONWCell = 'player1' | 'player2' | 'player3' | 'player4' | 'player5' | undefined;
 // eslint-disable-next-line @typescript-eslint/ban-types
 export type ONWEvents = GameEventTypes & {
-  onwStatusUpdated: (status: ONWStatus) => void;
-  onwGameStart: () => void;
-  onwRoleAssignment: () => void;
+  onwStatusChanged: (onwStatus: string) => void;
 };
-
-export type ONWStatus = 'WELCOME_PLAYERS' | 'ROLE_ASSIGNMENT';
 
 /**
  * This class is responsible for managing the state of the One Night Werewolf Game, and for sending commands to the server
  */
 export default class ONWAreaController extends GameAreaController<ONWGameState, ONWEvents> {
-  // Returns the status the game is in. The initial status of the game will be "WELCOME_PLAYERS"
-  private _onwStatus: ONWStatus = 'WELCOME_PLAYERS';
-
-  /**
-   * Sets the status the of ONWGame
-   */
-  setONWStatus(status: ONWStatus): void {
-    this._onwStatus = status;
-    this.emit('onwStatusUpdated', status);
-  }
-
-  /**
-   * Sets the status the of ONW Game
-   */
-  get onwStatus(): ONWStatus {
-    return this._onwStatus;
-  }
-
-  /**
-   * Returns true if the ONW game is currently in the "WELCOME_PLAYERS" state
-   */
-  public isWelcomePlayers(): boolean {
-    return this._onwStatus === 'WELCOME_PLAYERS';
-  }
-
-  /**
-   * Starts the ONW Game and emits the 'onwGameStart' event
-   */
-  startONWGame(): void {
-    this.setONWStatus('WELCOME_PLAYERS');
-    this.emit('onwGameStart');
-  }
-
-  /**
-   * Method to handle timing transitions (e.g., WELCOME_PLAYERS to ROLE_ASSIGNMENT)
-   */
-  public handleTimingTransitions(): void {
-    if (this.isWelcomePlayers()) {
-      setTimeout(() => {
-        if (this.isWelcomePlayers()) {
-          this.setONWStatus('ROLE_ASSIGNMENT');
-        }
-      }, 5000); // 5 seconds
-    }
-  }
-
   /**
    * Returns the player with the 'Player1' game piece, if there is one, or undefined otherwise
    */
@@ -172,6 +122,18 @@ export default class ONWAreaController extends GameAreaController<ONWGameState, 
       return 'WAITING_TO_START';
     }
     return status;
+  }
+
+  /**
+   * Returns the onwStatus of the game.
+   * Defaults to 'WAITING_TO_START' if the game is not in progress
+   */
+  get onwStatus(): ONWStatus {
+    const onwStatus = this._model.game?.state.onwStatus;
+    if (!onwStatus) {
+      return 'WELCOME_PLAYERS';
+    }
+    return onwStatus;
   }
 
   /**
