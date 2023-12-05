@@ -15,16 +15,37 @@ export type ONWGameProps = {
  *  "ROLE_ASSIGNMENT" => "The players are learning their roles."
  */
 export default function ONWBoard({ gameAreaController }: ONWGameProps): JSX.Element {
-  const [onwGameStatus, setONWgameStatus] = useState<ONWStatus>(gameAreaController.onwStatus);
-  // const [gameStatusText, setGameStatusText] = useState<string>('');
+  const [onwGameStatus, setONWgameStatus] = useState<ONWStatus>('WELCOME_PLAYERS');
   const toast = useToast();
 
   useEffect(() => {
-    gameAreaController.addListener('statusChanged', setONWgameStatus);
-    return () => {
-      gameAreaController.removeListener('statusChanged', setONWgameStatus);
+    const updateONWGameState = () => {
+      const newStatus = gameAreaController.onwStatus || 'WELCOME_PLAYERS';
+      setONWgameStatus(newStatus);
     };
-  }, [gameAreaController]);
+
+    gameAreaController.addListener('ONWgameUpdated', updateONWGameState);
+
+    return () => {
+      gameAreaController.removeListener('ONWgameUpdated', updateONWGameState);
+    };
+  }, [gameAreaController, onwGameStatus, toast]);
+
+  // Additional logic based on newStatus can go here
+  if (gameAreaController.onwStatus === 'WELCOME_PLAYERS') {
+    // Set 'ROLE_ASSIGNMENT' after 10 seconds
+    setTimeout(() => {
+      setONWgameStatus('ROLE_ASSIGNMENT');
+      console.log('we changed to role assignment');
+    }, 5000); // 10 seconds in milliseconds
+  }
+
+  let onwGameStatusText = <>Nothing yet!</>;
+  if (onwGameStatus === 'WELCOME_PLAYERS') {
+    onwGameStatusText = <>Hi everyone! Welcome to the game.</>;
+  } else if (onwGameStatus === 'ROLE_ASSIGNMENT') {
+    onwGameStatusText = <>Everyone is getting their roles.</>;
+  }
 
   return (
     <Container maxW='xl' mt={8}>
@@ -32,7 +53,7 @@ export default function ONWBoard({ gameAreaController }: ONWGameProps): JSX.Elem
         One Night Werewolf
       </Heading>
       <Text textAlign='center' fontSize='xl' mb={4}>
-        {onwGameStatus}
+        {onwGameStatusText}
       </Text>
     </Container>
   );

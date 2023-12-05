@@ -137,6 +137,17 @@ export default class ONWAreaController extends GameAreaController<ONWGameState, 
   }
 
   /**
+   * Changes the onwStatus to 'ROLE_ASSIGNMENT' if the current onwStatus is 'WELCOME_PLAYERS'
+   */
+  public changeONWStatus(): void {
+    if (this.onwStatus === 'WELCOME_PLAYERS') {
+      this._model.game!.state.onwStatus = 'ROLE_ASSIGNMENT';
+      this.emit('onwStatusChanged', 'ROLE_ASSIGNMENT');
+      console.log('We changed the status to');
+    }
+  }
+
+  /**
    * Returns true if the game is in progress
    */
   public isActive(): boolean {
