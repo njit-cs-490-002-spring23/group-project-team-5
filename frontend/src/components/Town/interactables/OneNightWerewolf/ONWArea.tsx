@@ -23,12 +23,7 @@ import ONWAreaController from '../../../../classes/interactable/ONWAreaControlle
 import PlayerController from '../../../../classes/PlayerController';
 import { useInteractable, useInteractableAreaController } from '../../../../classes/TownController';
 import useTownController from '../../../../hooks/useTownController';
-import {
-  GameResult,
-  GameStatus,
-  InteractableID,
-  ONWStatus,
-} from '../../../../types/CoveyTownSocket';
+import { GameResult, GameStatus, InteractableID } from '../../../../types/CoveyTownSocket';
 import GameAreaInteractable from '../GameArea';
 import ONWLeaderboard from '../Leaderboard';
 import ONWBoard from './ONWBoard';
