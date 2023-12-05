@@ -122,7 +122,7 @@ export type InteractableID = string;
 export type GameInstanceID = string;
 
 
-export type ONWStatus = 'WELCOME_PLAYERS' | 'ROLE_ASSIGNMENT';
+export type ONWStatus = 'WELCOME_PLAYERS' | 'ROLE_ASSIGNMENT' | 'NIGHT' | 'REVEAL_WHO_DIED' | 'DISCUSS' | 'VOTE' | 'END_SCREEN';
 /**
  * Base type for the state of a game
  */

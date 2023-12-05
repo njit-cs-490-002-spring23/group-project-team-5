@@ -65,12 +65,10 @@ import ONWBoard from './ONWBoard';
 function ONWArea({ interactableID }: { interactableID: InteractableID }): JSX.Element {
   const gameAreaController = useInteractableAreaController<ONWAreaController>(interactableID);
   const townController = useTownController();
-
   const [history, setHistory] = useState<GameResult[]>(gameAreaController.history);
   const [gameStatus, setGameStatus] = useState<GameStatus>(gameAreaController.status);
   const [observers, setObservers] = useState<PlayerController[]>(gameAreaController.observers);
   const [joiningGame, setJoiningGame] = useState(false);
-  const [onwGameStatus, setONWgameStatus] = useState<ONWStatus>(gameAreaController.onwStatus);
   const [player1, setPlayer1] = useState<PlayerController | undefined>(gameAreaController.player1);
   const [player2, setPlayer2] = useState<PlayerController | undefined>(gameAreaController.player2);
   const [player3, setPlayer3] = useState<PlayerController | undefined>(gameAreaController.player3);
@@ -80,9 +78,9 @@ function ONWArea({ interactableID }: { interactableID: InteractableID }): JSX.El
 
   useEffect(() => {
     const updateGameState = () => {
+      console.log('ONWArea event triggered');
       setHistory(gameAreaController.history);
       setGameStatus(gameAreaController.status || 'WAITING_TO_START');
-      setONWgameStatus(gameAreaController.onwStatus || 'WELCOME_PLAYERS');
       setObservers(gameAreaController.observers);
       setPlayer1(gameAreaController.player1);
       setPlayer2(gameAreaController.player2);

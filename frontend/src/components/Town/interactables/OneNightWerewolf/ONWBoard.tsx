@@ -15,36 +15,39 @@ export type ONWGameProps = {
  *  "ROLE_ASSIGNMENT" => "The players are learning their roles."
  */
 export default function ONWBoard({ gameAreaController }: ONWGameProps): JSX.Element {
-  const [onwGameStatus, setONWgameStatus] = useState<ONWStatus>('WELCOME_PLAYERS');
+  const [onwGameStatus, setONWgameStatus] = useState<ONWStatus>('WELCOME_PLAYERS'); // default start stage
   const toast = useToast();
 
   useEffect(() => {
-    const updateONWGameState = () => {
-      const newStatus = gameAreaController.onwStatus || 'WELCOME_PLAYERS';
-      setONWgameStatus(newStatus);
-    };
+    console.log('This is happening');
+    if (gameAreaController.onwStatus === 'WELCOME_PLAYERS') {
+      // Set 'ROLE_ASSIGNMENT' after 5 seconds
+      setTimeout(() => {
+        setONWgameStatus('ROLE_ASSIGNMENT');
+        console.log('we changed to role assignment');
 
-    gameAreaController.addListener('ONWgameUpdated', updateONWGameState);
+        // Set 'NIGHT' after another 5 seconds
+        setTimeout(() => {
+          setONWgameStatus('NIGHT');
+          console.log('we changed to night');
+        }, 5000); // 5 seconds in milliseconds
+      }, 5000); // 5 seconds in milliseconds
+    }
+
+    gameAreaController.addListener('ONWgameUpdated', setONWgameStatus);
 
     return () => {
-      gameAreaController.removeListener('ONWgameUpdated', updateONWGameState);
+      gameAreaController.removeListener('ONWgameUpdated', setONWgameStatus);
     };
-  }, [gameAreaController, onwGameStatus, toast]);
-
-  // Additional logic based on newStatus can go here
-  if (gameAreaController.onwStatus === 'WELCOME_PLAYERS') {
-    // Set 'ROLE_ASSIGNMENT' after 10 seconds
-    setTimeout(() => {
-      setONWgameStatus('ROLE_ASSIGNMENT');
-      console.log('we changed to role assignment');
-    }, 5000); // 10 seconds in milliseconds
-  }
+  }, [gameAreaController]);
 
   let onwGameStatusText = <>Nothing yet!</>;
   if (onwGameStatus === 'WELCOME_PLAYERS') {
     onwGameStatusText = <>Hi everyone! Welcome to the game.</>;
   } else if (onwGameStatus === 'ROLE_ASSIGNMENT') {
     onwGameStatusText = <>Everyone is getting their roles.</>;
+  } else if (onwGameStatus === 'NIGHT') {
+    onwGameStatusText = <>It is night time!</>;
   }
 
   return (
