@@ -32,7 +32,27 @@ const RoleAssignmentScreen: React.FC = () => (
 // eslint-disable-next-line @typescript-eslint/naming-convention
 const NightScreen: React.FC = () => (
   <Box textAlign='center' fontSize='xl'>
-    <Text mb={4}>It is night time!</Text>
+    <Text mb={4} fontSize='2xl' fontWeight='bold'>
+      Night Time
+    </Text>
+    <Text mb={4}>The creatures of the night awaken...</Text>
+    <VStack spacing={4} align='center'>
+      {/* Use Chakra UI Button for each player */}
+      <HStack spacing={4}>
+        <Button variant='solid' colorScheme='teal'>
+          Player Name
+        </Button>
+        <Button variant='solid' colorScheme='teal'>
+          Player Name
+        </Button>
+        <Button variant='solid' colorScheme='teal'>
+          Player Name
+        </Button>
+        <Button variant='solid' colorScheme='teal'>
+          Player Name
+        </Button>
+      </HStack>
+    </VStack>
   </Box>
 );
 
