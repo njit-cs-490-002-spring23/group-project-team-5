@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   Accordion,
   AccordionButton,
@@ -80,11 +81,9 @@ const center = {
 function ONWArea({ interactableID }: { interactableID: InteractableID }): JSX.Element {
   const gameAreaController = useInteractableAreaController<ONWAreaController>(interactableID);
   const townController = useTownController();
-
   const [history, setHistory] = useState<GameResult[]>(gameAreaController.history);
   const [gameStatus, setGameStatus] = useState<GameStatus>(gameAreaController.status);
   const [observers, setObservers] = useState<PlayerController[]>(gameAreaController.observers);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [joiningGame, setJoiningGame] = useState(false);
   const [player1, setPlayer1] = useState<PlayerController | undefined>(gameAreaController.player1);
   const [player2, setPlayer2] = useState<PlayerController | undefined>(gameAreaController.player2);
@@ -95,6 +94,7 @@ function ONWArea({ interactableID }: { interactableID: InteractableID }): JSX.El
 
   useEffect(() => {
     const updateGameState = () => {
+      console.log('ONWArea event triggered');
       setHistory(gameAreaController.history);
       setGameStatus(gameAreaController.status || 'WAITING_TO_START');
       setObservers(gameAreaController.observers);
@@ -104,6 +104,7 @@ function ONWArea({ interactableID }: { interactableID: InteractableID }): JSX.El
       setPlayer4(gameAreaController.player4);
       setPlayer5(gameAreaController.player5);
     };
+
     gameAreaController.addListener('gameUpdated', updateGameState);
     const onGameEnd = () => {
       const winner = gameAreaController.winner;
@@ -128,11 +129,12 @@ function ONWArea({ interactableID }: { interactableID: InteractableID }): JSX.El
       }
     };
     gameAreaController.addListener('gameEnd', onGameEnd);
+
     return () => {
       gameAreaController.removeListener('gameEnd', onGameEnd);
       gameAreaController.removeListener('gameUpdated', updateGameState);
     };
-  }, [townController, gameAreaController, toast]);
+  }, [townController, gameAreaController, toast, gameStatus]);
 
   let gameStatusText = <></>;
   if (gameStatus === 'IN_PROGRESS') {
@@ -210,13 +212,9 @@ function ONWArea({ interactableID }: { interactableID: InteractableID }): JSX.El
         </AccordionItem>
         <AccordionItem>
           <Heading as='h3'>
-            <AccordionButton 
-              _hover={{
-                backgroundColor: 'yellow.500',
-              }}
-              >
-              <Box as='span' flex='1' textAlign='center'>
-                Current Observers
+            <AccordionButton>
+              <Box as='span' flex='1' textAlign='left'>
+                Current Observers For Game
                 <AccordionIcon />
               </Box>
             </AccordionButton>
@@ -257,13 +255,21 @@ function ONWArea({ interactableID }: { interactableID: InteractableID }): JSX.El
 export default function ONWAreaWrapper(): JSX.Element {
   const gameArea = useInteractable<GameAreaInteractable>('gameArea');
   const townController = useTownController();
+  const toast = useToast();
+
   const closeModal = useCallback(() => {
     if (gameArea) {
       townController.interactEnd(gameArea);
       const controller = townController.getGameAreaController(gameArea);
       controller.leaveGame();
+      // Show toast when the modal is closed
+      toast({
+        title: 'You left the game',
+        description: 'Everyone please close the window and rejoin',
+        status: 'info',
+      });
     }
-  }, [townController, gameArea]);
+  }, [townController, gameArea, toast]);
 
   if (gameArea && gameArea.getData('type') === 'OneNightWerewolf') {
     return (

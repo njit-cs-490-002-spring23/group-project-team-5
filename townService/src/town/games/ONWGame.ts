@@ -109,7 +109,7 @@ export default class ONWGame extends Game<ONWGameState, ONWMove> {
   /**
    * Removes a player from the game.
    * Updates the game's state to reflect the player leaving.
-   * If the game has two players in it at the time of call to this method,
+   * If the game has 5 players in it at the time of call to this method,
    *   updates the game's status to OVER and sets the winner to the other player.
    * If the game does not yet have two players in it at the time of call to this method,
    *   updates the game's status to WAITING_TO_START.
@@ -120,51 +120,32 @@ export default class ONWGame extends Game<ONWGameState, ONWMove> {
   protected _leave(player: Player): void {
     // Check if the player is in the game, if you remove a player in the game throw an error
     if (
-      this.state.player1 !== player.id &&
-      this.state.player2 !== player.id &&
-      this.state.player3 !== player.id &&
-      this.state.player4 !== player.id &&
-      this.state.player5 !== player.id
+      (this.state.player1 !== player.id ||
+        this.state.player2 !== player.id ||
+        this.state.player3 !== player.id ||
+        this.state.player4 !== player.id ||
+        this.state.player5 !== player.id) &&
+      this.state.status === 'IN_PROGRESS'
     ) {
-      throw new InvalidParametersError(PLAYER_NOT_IN_GAME_MESSAGE);
+      this.state = {
+        status: 'OVER',
+        player1: undefined,
+        player2: undefined,
+        player3: undefined,
+        player4: undefined,
+        player5: undefined,
+      };
     }
-    // handles case where the game has started, remain in WAITING_TO_START and reset all the players
     if (this.state.player5 === undefined) {
-      if (
-        this.state.player1 !== player.id &&
-        this.state.player2 !== player.id &&
-        this.state.player3 !== player.id &&
-        this.state.player4 !== player.id &&
-        this.state.player5 !== player.id
-      ) {
-        this.state = {
-          status: 'WAITING_TO_START',
-          player1: undefined,
-          player2: undefined,
-          player3: undefined,
-          player4: undefined,
-          player5: undefined,
-        };
-      }
-    }
-    // handles case where the game has started, auto ends and reset all the players
-    if (this.state.player5 !== undefined) {
-      if (
-        this.state.player1 !== player.id &&
-        this.state.player2 !== player.id &&
-        this.state.player3 !== player.id &&
-        this.state.player4 !== player.id &&
-        this.state.player5 !== player.id
-      ) {
-        this.state = {
-          status: 'OVER',
-          player1: undefined,
-          player2: undefined,
-          player3: undefined,
-          player4: undefined,
-          player5: undefined,
-        };
-      }
+      // Game not yet started, set status to 'WAITING_TO_START' and reset all players
+      this.state = {
+        status: 'WAITING_TO_START',
+        player1: undefined,
+        player2: undefined,
+        player3: undefined,
+        player4: undefined,
+        player5: undefined,
+      };
     }
   }
 

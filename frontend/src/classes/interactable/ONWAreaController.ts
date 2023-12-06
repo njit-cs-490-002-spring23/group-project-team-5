@@ -1,7 +1,7 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import _ from 'lodash';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { GameArea, GameStatus, ONWGameState } from '../../types/CoveyTownSocket';
+import { GameArea, GameStatus, ONWGameState, ONWStatus } from '../../types/CoveyTownSocket';
 import PlayerController from '../PlayerController';
 import GameAreaController, { GameEventTypes } from './GameAreaController';
 
@@ -11,44 +11,14 @@ export const NO_GAME_IN_PROGRESS_ERROR = 'No game in progress';
 
 export type ONWCell = 'player1' | 'player2' | 'player3' | 'player4' | 'player5' | undefined;
 // eslint-disable-next-line @typescript-eslint/ban-types
-export type ONWEvents = GameEventTypes & {};
-export type ONWStatus = 'WELCOME_PLAYERS' | 'ROLE_ASSIGNMENT';
+export type ONWEvents = GameEventTypes & {
+  onwStatusChanged: (onwStatus: string) => void;
+};
 
 /**
  * This class is responsible for managing the state of the One Night Werewolf Game, and for sending commands to the server
  */
 export default class ONWAreaController extends GameAreaController<ONWGameState, ONWEvents> {
-  // Returns the status the game is in. The initial status of the game will be "WELCOME_PLAYERS"
-  private _onwStatus: ONWStatus = 'WELCOME_PLAYERS';
-
-  /**
-   * Sets the status the of ONWGame
-   */
-  setONWStatus(status: ONWStatus): void {
-    this._onwStatus = status;
-    this.emit('onwStatusUpdated', status);
-  }
-
-  /**
-   * Sets the status the of ONW Game
-   */
-  get onwStatus(): ONWStatus {
-    return this._onwStatus;
-  }
-
-  /**
-   * Method to handle timing transitions (e.g., WELCOME_PLAYERS to ROLE_ASSIGNMENT)
-   */
-  private _handleTimingTransitions(): void {
-    if (this.isActive()) {
-      setTimeout(() => {
-        if (this._onwStatus === 'WELCOME_PLAYERS') {
-          this.setONWStatus('ROLE_ASSIGNMENT');
-        }
-      }, 5000); // 5 seconds
-    }
-  }
-
   /**
    * Returns the player with the 'Player1' game piece, if there is one, or undefined otherwise
    */
@@ -133,11 +103,11 @@ export default class ONWAreaController extends GameAreaController<ONWGameState, 
     } else if (this.player2?.id === this._townController.ourPlayer.id) {
       return 'player2';
     } else if (this.player3?.id === this._townController.ourPlayer.id) {
-      return 'player2';
+      return 'player3';
     } else if (this.player4?.id === this._townController.ourPlayer.id) {
-      return 'player2';
+      return 'player4';
     } else if (this.player5?.id === this._townController.ourPlayer.id) {
-      return 'player2';
+      return 'player5';
     }
     throw new Error(PLAYER_NOT_IN_GAME_ERROR);
   }
@@ -152,6 +122,29 @@ export default class ONWAreaController extends GameAreaController<ONWGameState, 
       return 'WAITING_TO_START';
     }
     return status;
+  }
+
+  /**
+   * Returns the onwStatus of the game.
+   * Defaults to 'WAITING_TO_START' if the game is not in progress
+   */
+  get onwStatus(): ONWStatus {
+    const onwStatus = this._model.game?.state.onwStatus;
+    if (!onwStatus) {
+      return 'WELCOME_PLAYERS';
+    }
+    return onwStatus;
+  }
+
+  /**
+   * Changes the onwStatus to 'ROLE_ASSIGNMENT' if the current onwStatus is 'WELCOME_PLAYERS'
+   */
+  public changeONWStatus(): void {
+    if (this.onwStatus === 'WELCOME_PLAYERS') {
+      this._model.game!.state.onwStatus = 'ROLE_ASSIGNMENT';
+      this.emit('onwStatusChanged', 'ROLE_ASSIGNMENT');
+      console.log('We changed the status to');
+    }
   }
 
   /**
