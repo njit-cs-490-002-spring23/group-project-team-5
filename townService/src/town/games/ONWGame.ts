@@ -13,6 +13,16 @@ import Game from './Game';
  * @see https://www.ultraboardgames.com/one-night-ultimate-werewolf/game-rules.php
  */
 export default class ONWGame extends Game<ONWGameState, ONWMove> {
+
+  // Holding the players in player's array object
+  public players: Player[] = [];
+
+  // Map to hold id as key and player as value
+  public playersMap: Record<string, Player> = {};
+
+  // Logging the votes
+  public voteCount: Record<string, number> = {};
+
   // eslint-disable-next-line class-methods-use-this
   public applyMove(_move: GameMove<ONWMove>): void {
     throw new Error('Method not implemented.');
@@ -44,26 +54,37 @@ export default class ONWGame extends Game<ONWGameState, ONWMove> {
       throw new InvalidParametersError(PLAYER_ALREADY_IN_GAME_MESSAGE);
     }
     if (!this.state.player1) {
+      this.players.push(player);
+      this.playersMap[player.id] = player;
       this.state = {
         ...this.state,
         player1: player.id,
+        
       };
     } else if (!this.state.player2) {
+      this.players.push(player);
+      this.playersMap[player.id] = player;
       this.state = {
         ...this.state,
         player2: player.id,
       };
     } else if (!this.state.player3) {
+      this.players.push(player);
+      this.playersMap[player.id] = player;
       this.state = {
         ...this.state,
         player3: player.id,
       };
     } else if (!this.state.player4) {
+      this.players.push(player);
+      this.playersMap[player.id] = player;
       this.state = {
         ...this.state,
         player4: player.id,
       };
     } else if (!this.state.player5) {
+      this.players.push(player);
+      this.playersMap[player.id] = player;
       this.state = {
         ...this.state,
         player5: player.id,
@@ -126,5 +147,98 @@ export default class ONWGame extends Game<ONWGameState, ONWMove> {
         player5: undefined,
       };
     }
+  }
+
+
+  /**
+   Check if player is in the game for voting logic
+   @param player The player to check
+   @returns True if the player is in the game, false otherwise
+  **/
+
+  public isPlayerInGame(player: Player): boolean {
+    return(
+      this.state.player1 === player.id ||
+      this.state.player2 === player.id ||
+      this.state.player3 === player.id ||
+      this.state.player4 === player.id ||
+      this.state.player5 === player.id 
+    )
+  }
+
+  /**
+ * Get the list of players in the game.
+ *
+ * @returns An array of Player objects
+ **/
+  public getPlayers(): Player[] {
+    return this.players;
+  }
+
+/**
+ * Get a player by their ID.
+ *
+ * @param playerID The ID of the player to retrieve
+ * @returns The Player object if found, or undefined if not found
+ **/
+public getPlayerByID(playerID: string): Player | undefined {
+  return this.playersMap[playerID];
+}
+
+// private getPlayerByIDDirect(playerID: string): Player | undefined {
+//   // Access the state directly to avoid recursion
+//   return this.players.find(player => player.id === playerID);
+// }
+
+
+
+  /**
+   Handles a vote from a player to kick another player.
+   Updates the game state to refelct the vote
+   @param voter The player casting the vote
+   @param target The player being voted against
+   @throws InvalidParametersError if the voter or target is not in the game
+  **/
+   public handleVote(voter: Player, target: Player): void {
+    if (
+      !this.isPlayerInGame(voter) ||
+      !this.isPlayerInGame(target) ||
+      voter.id === target.id
+    ) {
+      throw new InvalidParametersError('Invalid vote parameters');
+    }
+
+    // Update the vote count for the target player
+    this.voteCount[target.id] = (this.voteCount[target.id] || 0) + 1;
+
+    if (Object.keys(this.voteCount).length === this.getPlayers().length) {
+      // Figuring out who has the most votes.
+      const playerWithMostVotes = Object.keys(this.voteCount).reduce(
+        (prevPlayer, currentPlayer) =>
+          this.voteCount[currentPlayer] > this.voteCount[prevPlayer]
+            ? currentPlayer
+            : prevPlayer,
+      );
+
+      this.handleVoteResult(playerWithMostVotes);
+
+      // Clearing the vote for next round
+      this.voteCount = {};
+    }
+  }
+
+
+  /**
+   * Handles the result of the vote.
+   *
+   * @param kickedPlayerID The ID of the player with the most votes
+   */
+  private handleVoteResult(kickedPlayerID: string): void {
+    // Kicking player based on # of votes.
+    const kickedPlayer = this.getPlayerByID(kickedPlayerID);
+    if (kickedPlayer) {
+      this.leave(kickedPlayer);
+    }
+
   }
 }

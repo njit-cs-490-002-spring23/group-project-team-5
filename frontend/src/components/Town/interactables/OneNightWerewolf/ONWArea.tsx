@@ -57,6 +57,27 @@ import ONWBoard from './ONWBoard';
  *    - Our player lost: description 'You lost :('
  *
  */
+
+const onwImage = {
+  backgroundImage: 'url("https://clan.akamai.steamstatic.com/images/5854753/b66553f114b91d1264e5323cc3262b1313f7cdde.jpg")',
+  backgroundSize: 'cover',
+  backgroundRepeat: 'no-repeat',
+  height: '23vh', 
+};
+
+const containerStyle = {
+  backgroundColor: '#fff8e3',
+  padding: '20px',
+  display: 'flex',
+  flexDirection: 'column',
+  aligItems: 'center',
+  justifyContent: 'center'
+}
+
+const center = {
+  textAlign: 'center',
+}
+
 function ONWArea({ interactableID }: { interactableID: InteractableID }): JSX.Element {
   const gameAreaController = useInteractableAreaController<ONWAreaController>(interactableID);
   const townController = useTownController();
@@ -126,39 +147,60 @@ function ONWArea({ interactableID }: { interactableID: InteractableID }): JSX.El
     ) {
       joinGameButton = (
         <Button
-          onClick={async () => {
-            setJoiningGame(true);
-            try {
-              await gameAreaController.joinGame();
-            } catch (err) {
-              toast({
-                title: 'Error joining game',
-                description: (err as Error).toString(),
-                status: 'error',
-              });
-            }
-            setJoiningGame(false);
-          }}
-          isLoading={joiningGame}
-          disabled={joiningGame}>
-          Join New Game
+            onClick={async () => {
+              setJoiningGame(true);
+              try {
+                await gameAreaController.joinGame();
+              } catch (err) {
+                toast({
+              title: 'Error joining game',
+              description: (err as Error).toString(),
+              status: 'error',
+            });
+          }
+          setJoiningGame(false);
+            }}
+            isLoading={joiningGame}
+            disabled={joiningGame}
+            colorScheme="yellow" 
+            variant="solid" 
+            size="md" 
+            borderRadius="md" 
+            _hover={{ bg: 'yellow.500' }} 
+            _focus={{ boxShadow: 'outline' }} 
+          >
+            Join New Game
         </Button>
       );
     }
     gameStatusText = (
+      <Box>
       <b>
-        Game {gameStatus === 'WAITING_TO_START' ? 'not yet started' : 'over'}. {joinGameButton}
+        Game {gameStatus === 'WAITING_TO_START' ? 'not yet started' : 'over'}.
       </b>
+      <br></br><br></br>
+      {joinGameButton}
+    </Box>
     );
   }
 
   return (
-    <Container>
+    
+    <Container style={containerStyle}>
+      <br></br>
+      <div style={onwImage}>
+
+      </div>
       <Accordion allowToggle>
         <AccordionItem>
-          <Heading as='h3'>
-            <AccordionButton>
-              <Box as='span' flex='1' textAlign='left'>
+          <Heading as='h3' textAlign='center'>
+            <br></br>
+            <AccordionButton
+              _hover={{
+                backgroundColor: 'yellow.500',
+              }}
+            >
+              <Box as='span' flex='1' textAlign='center'>
                 Leaderboard
                 <AccordionIcon />
               </Box>
@@ -178,7 +220,7 @@ function ONWArea({ interactableID }: { interactableID: InteractableID }): JSX.El
             </AccordionButton>
           </Heading>
           <AccordionPanel>
-            <List aria-label='list of observers in the game'>
+            <List aria-label='list of observers in the game' textAlign='center'>
               {observers.map(player => {
                 return <ListItem key={player.id}>{player.userName}</ListItem>;
               })}
@@ -186,8 +228,12 @@ function ONWArea({ interactableID }: { interactableID: InteractableID }): JSX.El
           </AccordionPanel>
         </AccordionItem>
       </Accordion>
-      {gameStatusText}
-      <List aria-label='list of players in the game'>
+      <br></br>
+      <Heading textAlign='center' fontSize='20px'>
+        {gameStatusText}
+      </Heading>
+      <br></br>
+      <List aria-label='list of players in the game' textAlign='center'>
         <ListItem>Player 1: {player1?.userName || '(No Player 1 yet!)'}</ListItem>
         <ListItem>Player 2: {player2?.userName || '(No Player 2 yet!)'}</ListItem>
         <ListItem>Player 3: {player3?.userName || '(No Player 3 yet!)'}</ListItem>
@@ -196,6 +242,7 @@ function ONWArea({ interactableID }: { interactableID: InteractableID }): JSX.El
       </List>
       {gameStatus === 'IN_PROGRESS' && <ONWBoard gameAreaController={gameAreaController} />}
     </Container>
+    
   );
 }
 
@@ -227,12 +274,14 @@ export default function ONWAreaWrapper(): JSX.Element {
   if (gameArea && gameArea.getData('type') === 'OneNightWerewolf') {
     return (
       <Modal isOpen={true} onClose={closeModal} closeOnOverlayClick={false}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>{gameArea.name}</ModalHeader>
-          <ModalCloseButton />
-          <ONWArea interactableID={gameArea.name} />;
-        </ModalContent>
+        <div>
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>{gameArea.name}</ModalHeader>
+            <ModalCloseButton />
+            <ONWArea interactableID={gameArea.name} />;
+          </ModalContent>
+        </div>
       </Modal>
     );
   }
