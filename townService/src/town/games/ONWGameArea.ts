@@ -61,7 +61,6 @@ export default class ONWGameArea extends GameArea<ONWGame> {
    * Handle a command from a player in this game area.
    * Supported commands:
    * - JoinGame (joins the game `this._game`, or creates a new one if none is in progress)
-   * - GameMove (applies a move to the game)
    * - LeaveGame (leaves the game)
    *
    * If the command ended the game, records the outcome in this._history
@@ -83,22 +82,6 @@ export default class ONWGameArea extends GameArea<ONWGame> {
     command: CommandType,
     player: Player,
   ): InteractableCommandReturnType<CommandType> {
-    if (command.type === 'GameMove') {
-      const game = this._game;
-      if (!game) {
-        throw new InvalidParametersError(GAME_NOT_IN_PROGRESS_MESSAGE);
-      }
-      if (this._game?.id !== command.gameID) {
-        throw new InvalidParametersError(GAME_ID_MISSMATCH_MESSAGE);
-      }
-      game.applyMove({
-        gameID: command.gameID,
-        playerID: player.id,
-        move: command.move,
-      });
-      this._stateUpdated(game.toModel());
-      return undefined as InteractableCommandReturnType<CommandType>;
-    }
     if (command.type === 'JoinGame') {
       let game = this._game;
       if (!game || game.state.status === 'OVER') {
