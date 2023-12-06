@@ -1,4 +1,4 @@
-import { Container, Heading, Text, useToast } from '@chakra-ui/react';
+import { chakra, Container, Heading, Text, useToast, Box } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import ONWAreaController from '../../../../classes/interactable/ONWAreaController';
 import { ONWStatus, GameStatus } from '../../../../types/CoveyTownSocket';
@@ -7,6 +7,82 @@ export type ONWGameProps = {
   gameAreaController: ONWAreaController;
 };
 
+// Custom component for the Welcome Players screen
+// eslint-disable-next-line @typescript-eslint/naming-convention
+const WelcomePlayersScreen: React.FC = () => (
+  <Box textAlign='center' fontSize='4xl' fontFamily='fantasy' color='black'>
+    <Text mb={8} fontSize='xl'>
+      welcome to
+    </Text>
+    <Text mb={8} fontSize='5xl'>
+      ONE NIGHT WEREWOLF
+    </Text>
+  </Box>
+);
+
+// Custom component for the Role Assignment screen
+// eslint-disable-next-line @typescript-eslint/naming-convention
+const RoleAssignmentScreen: React.FC = () => (
+  <Box textAlign='center' fontSize='xl'>
+    <Text mb={4}>Everyone is getting their roles.</Text>
+  </Box>
+);
+
+// Custom component for the Night screen
+// eslint-disable-next-line @typescript-eslint/naming-convention
+const NightScreen: React.FC = () => (
+  <Box textAlign='center' fontSize='xl'>
+    <Text mb={4}>It is night time!</Text>
+  </Box>
+);
+
+// Custom component for the Reveal Who Died screen
+// eslint-disable-next-line @typescript-eslint/naming-convention
+const RevealWhoDiedScreen: React.FC = () => (
+  <Box textAlign='center' fontSize='xl'>
+    <Text mb={4}>Revealing who died...</Text>
+  </Box>
+);
+
+// Custom component for the Discussion Time screen
+// eslint-disable-next-line @typescript-eslint/naming-convention
+const DiscussionTimeScreen: React.FC = () => (
+  <Box textAlign='center' fontSize='xl'>
+    <Text mb={4}>Discussion time!</Text>
+  </Box>
+);
+
+// Custom component for the Vote screen
+// eslint-disable-next-line @typescript-eslint/naming-convention
+const VoteScreen: React.FC = () => (
+  <Box textAlign='center' fontSize='xl'>
+    <Text mb={4}>Voting time!</Text>
+  </Box>
+);
+
+// Custom component for the End Screen
+// eslint-disable-next-line @typescript-eslint/naming-convention
+const EndScreen: React.FC = () => (
+  <Box textAlign='center' fontSize='xl'>
+    <Text mb={4}>Game over! Displaying end screen.</Text>
+  </Box>
+);
+
+/**
+ * A component that will render the StyledONWBoard board, styled
+ */
+// eslint-disable-next-line @typescript-eslint/naming-convention
+const StyledONWBoard = chakra(Container, {
+  baseStyle: {
+    display: 'flex',
+    justifyContent: 'center', // Center horizontally
+    alignItems: 'center', // Center vertically
+    width: '400px',
+    height: '400px',
+    padding: '5px',
+    flexWrap: 'wrap',
+  },
+});
 /**
  * One Night Werewolf board
  *
@@ -55,31 +131,31 @@ export default function ONWBoard({ gameAreaController }: ONWGameProps): JSX.Elem
     };
   }, [gameAreaController]);
 
-  let onwGameStatusText = <>Nothing yet!</>;
-  if (onwGameStatus === 'WELCOME_PLAYERS') {
-    onwGameStatusText = <>Hi everyone! Welcome to the game.</>;
-  } else if (onwGameStatus === 'ROLE_ASSIGNMENT') {
-    onwGameStatusText = <>Everyone is getting their roles.</>;
-  } else if (onwGameStatus === 'NIGHT') {
-    onwGameStatusText = <>It is night time!</>;
-  } else if (onwGameStatus === 'REVEAL_WHO_DIED') {
-    onwGameStatusText = <>Revealing who died...</>;
-  } else if (onwGameStatus === 'DISCUSSION_TIME') {
-    onwGameStatusText = <>Discussion time!</>;
-  } else if (onwGameStatus === 'VOTE') {
-    onwGameStatusText = <>Voting time!</>;
-  } else if (onwGameStatus === 'END_SCREEN') {
-    onwGameStatusText = <>Game over! Displaying end screen.</>;
-  }
+  // Function to render the appropriate screen based on onwGameStatus
+  const renderScreen = () => {
+    switch (onwGameStatus) {
+      case 'WELCOME_PLAYERS':
+        return <WelcomePlayersScreen />;
+      case 'ROLE_ASSIGNMENT':
+        return <RoleAssignmentScreen />;
+      case 'NIGHT':
+        return <NightScreen />;
+      case 'REVEAL_WHO_DIED':
+        return <RevealWhoDiedScreen />;
+      case 'DISCUSSION_TIME':
+        return <DiscussionTimeScreen />;
+      case 'VOTE':
+        return <VoteScreen />;
+      case 'END_SCREEN':
+        return <EndScreen />;
+      default:
+        return null;
+    }
+  };
 
   return (
-    <Container maxW='xl' mt={8}>
-      <Heading as='h2' textAlign='center' mb={4}>
-        One Night Werewolf
-      </Heading>
-      <Text textAlign='center' fontSize='xl' mb={4}>
-        {onwGameStatusText}
-      </Text>
-    </Container>
+    <StyledONWBoard aria-label='One Night Werewolf'>
+      {renderScreen()}
+    </StyledONWBoard>
   );
 }
