@@ -115,6 +115,17 @@ export interface ONWGameState extends WinnableGameState {
   player3?: PlayerID;
   player4?: PlayerID;
   player5?: PlayerID;
+  roles: ONWRole[5];
+}
+
+/**
+ * Type for roles and game actions in ONW
+ */
+export interface ONWRole {
+  role: 'Villager' | 'Seer' | 'Werewolf';
+  seer_appearance: 'Werewolf' | 'Not Werewolf';
+  immunity: boolean;
+  description: string;
   onwStatus?: ONWStatus;
 }
 
