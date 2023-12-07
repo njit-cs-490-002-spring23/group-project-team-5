@@ -267,7 +267,7 @@ export default class ONWGame extends Game<ONWGameState, ONWMove> {
    *
    * @throws InvalidParametersError if the game is not able to start due to lack of players (PLAYER_NOT_IN_GAME_MESSAGE)
    */
-  protected assignRoles(): void {
+  public assignRoles(): void {
     if (this.state.status != 'IN_PROGRESS') { //throws error if game is not in progress
       throw new InvalidParametersError(PLAYER_NOT_IN_GAME_MESSAGE);
     }
@@ -286,6 +286,9 @@ export default class ONWGame extends Game<ONWGameState, ONWMove> {
         seerIndex = Math.floor(Math.random() * 5);
       } while (seerIndex === werewolfIndex); // generates a number 0-4 for the index of the ONWRoles array that will represent the Seer player, and the do while guarantees that it will not be the same player as the Werewolf.
       for (let i = 0; i < 5; i++) {
+        if (!this.state.roles[i]) {
+          this.state.roles[i] = {};
+        }
         if (i == werewolfIndex) {
           this.state.roles[i].role = 'Werewolf';
           this.state.roles[i].seer_appearance = 'Werewolf';
