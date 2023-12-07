@@ -59,10 +59,11 @@ import ONWBoard from './ONWBoard';
  */
 
 const onwImage = {
-  backgroundImage: 'url("https://clan.akamai.steamstatic.com/images/5854753/b66553f114b91d1264e5323cc3262b1313f7cdde.jpg")',
+  backgroundImage:
+    'url("https://clan.akamai.steamstatic.com/images/5854753/b66553f114b91d1264e5323cc3262b1313f7cdde.jpg")',
   backgroundSize: 'cover',
   backgroundRepeat: 'no-repeat',
-  height: '23vh', 
+  height: '23vh',
 };
 
 const containerStyle = {
@@ -71,12 +72,12 @@ const containerStyle = {
   display: 'flex',
   flexDirection: 'column',
   aligItems: 'center',
-  justifyContent: 'center'
-}
+  justifyContent: 'center',
+};
 
 const center = {
   textAlign: 'center',
-}
+};
 
 function ONWArea({ interactableID }: { interactableID: InteractableID }): JSX.Element {
   const gameAreaController = useInteractableAreaController<ONWAreaController>(interactableID);
@@ -147,50 +148,45 @@ function ONWArea({ interactableID }: { interactableID: InteractableID }): JSX.El
     ) {
       joinGameButton = (
         <Button
-            onClick={async () => {
-              setJoiningGame(true);
-              try {
-                await gameAreaController.joinGame();
-              } catch (err) {
-                toast({
-              title: 'Error joining game',
-              description: (err as Error).toString(),
-              status: 'error',
-            });
-          }
-          setJoiningGame(false);
-            }}
-            isLoading={joiningGame}
-            disabled={joiningGame}
-            colorScheme="yellow" 
-            variant="solid" 
-            size="md" 
-            borderRadius="md" 
-            _hover={{ bg: 'yellow.500' }} 
-            _focus={{ boxShadow: 'outline' }} 
-          >
-            Join New Game
+          onClick={async () => {
+            setJoiningGame(true);
+            try {
+              await gameAreaController.joinGame();
+            } catch (err) {
+              toast({
+                title: 'Error joining game',
+                description: (err as Error).toString(),
+                status: 'error',
+              });
+            }
+            setJoiningGame(false);
+          }}
+          isLoading={joiningGame}
+          disabled={joiningGame}
+          colorScheme='yellow'
+          variant='solid'
+          size='md'
+          borderRadius='md'
+          _hover={{ bg: 'yellow.500' }}
+          _focus={{ boxShadow: 'outline' }}>
+          Join New Game
         </Button>
       );
     }
     gameStatusText = (
       <Box>
-      <b>
-        Game {gameStatus === 'WAITING_TO_START' ? 'not yet started' : 'over'}.
-      </b>
-      <br></br><br></br>
-      {joinGameButton}
-    </Box>
+        <b>Game {gameStatus === 'WAITING_TO_START' ? 'not yet started' : 'over'}.</b>
+        <br></br>
+        <br></br>
+        {joinGameButton}
+      </Box>
     );
   }
 
   return (
-    
     <Container style={containerStyle}>
       <br></br>
-      <div style={onwImage}>
-
-      </div>
+      <div style={onwImage}></div>
       <Accordion allowToggle>
         <AccordionItem>
           <Heading as='h3' textAlign='center'>
@@ -198,8 +194,7 @@ function ONWArea({ interactableID }: { interactableID: InteractableID }): JSX.El
             <AccordionButton
               _hover={{
                 backgroundColor: 'yellow.500',
-              }}
-            >
+              }}>
               <Box as='span' flex='1' textAlign='center'>
                 Leaderboard
                 <AccordionIcon />
@@ -242,7 +237,6 @@ function ONWArea({ interactableID }: { interactableID: InteractableID }): JSX.El
       </List>
       {gameStatus === 'IN_PROGRESS' && <ONWBoard gameAreaController={gameAreaController} />}
     </Container>
-    
   );
 }
 

@@ -115,6 +115,7 @@ export interface ONWGameState extends WinnableGameState {
   player3?: PlayerID;
   player4?: PlayerID;
   player5?: PlayerID;
+  onwStatus?: ONWStatus;
   roles: ONWRole[5];
 }
 
