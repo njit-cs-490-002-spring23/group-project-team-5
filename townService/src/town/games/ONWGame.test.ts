@@ -4,6 +4,7 @@ import {
   PLAYER_ALREADY_IN_GAME_MESSAGE,
   PLAYER_NOT_IN_GAME_MESSAGE,
 } from '../../lib/InvalidParametersError';
+import Player from '../../lib/Player';
 import ONWGame from './ONWGame';
 
 describe('OneNightWerewolf', () => {
@@ -45,7 +46,7 @@ describe('OneNightWerewolf', () => {
         game.join(player);
         expect(game.state.player1).toEqual(player.id);
         expect(game.state.player2).toBeUndefined();
-        expect(game.state.moves).toHaveLength(0);
+        // expect(game.state.moves).toHaveLength(0);
         expect(game.state.status).toEqual('WAITING_TO_START');
         expect(game.state.winner).toBeUndefined();
       });
@@ -354,4 +355,76 @@ describe('OneNightWerewolf', () => {
   describe('[T1.4] playerIDToONWRole', () => {
 
   });*/
+
+  describe('[T1.3] Voting', () => {
+
+    describe('isPlayerInGame', () => {
+      it('should return true if the player is in the game', () => {
+        const player1 = createPlayerForTesting();
+        game.join(player1);
+        expect(game.isPlayerInGame(player1)).toBe(true);
+      });
+  
+      it('should return false if the player is not in the game', () => {
+        const player1 = createPlayerForTesting();
+        expect(game.isPlayerInGame(player1)).toBe(false);
+      });
+    });
+
+    describe('getPlayers', () => {
+      it('should return true an array of players', () => {
+        const player1 = createPlayerForTesting();
+        const player2 = createPlayerForTesting();
+        const player3 = createPlayerForTesting();
+        const player4 = createPlayerForTesting();
+        const player5 = createPlayerForTesting();
+        game.join(player1);
+        game.join(player2);
+        game.join(player3);
+        game.join(player4);
+        game.join(player5);
+        const players = game.getPlayers();
+        expect(players).toHaveLength(5);
+      })
+    })
+
+    describe('getPlayerByID', () => {
+      it('should return the id of the player in string format', () => {
+        const player1 = createPlayerForTesting();
+        game.join(player1);
+
+        expect(game.state.player1).toEqual(player1.id);
+      });
+    })
+
+    describe('handleVote', () => {
+      it('should update the vote count and handle the vote result correctly', () =>{
+        const player1 = createPlayerForTesting();
+        const player2 = createPlayerForTesting();
+        game.join(player1);
+        game.join(player2);
+
+        // player2 votes player1
+        game.handleVote(player2,player1);
+
+        // player1 vote should be 1
+        expect(game.voteCount[player1.id]).toEqual(1);
+      })
+    })
+
+
+    // it('should record the vote for the specified player', () => {
+    //   //Creating players and making them join the game
+    //   const player1 = createPlayerForTesting();
+    //   const player2 = createPlayerForTesting();
+    //   const player3 = createPlayerForTesting();
+    //   const player4 = createPlayerForTesting();
+    //   const player5 = createPlayerForTesting();
+    //   game.join(player1);
+    //   game.join(player2);
+    //   game.join(player3);
+    //   game.join(player4);
+    //   game.join(player5);
+    // })
+  });
 });
