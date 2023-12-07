@@ -2,6 +2,7 @@ import { Table, Tbody, Td, Thead, Tr } from '@chakra-ui/react';
 import React from 'react';
 import { GameResult } from '../../../types/CoveyTownSocket';
 
+
 /**
  * A component that renders a list of GameResult's as a leaderboard, formatted as a table with the following columns:
  * - Player: the name of the player
