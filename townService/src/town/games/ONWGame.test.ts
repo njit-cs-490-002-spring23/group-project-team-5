@@ -303,6 +303,59 @@ describe('OneNightWerewolf', () => {
       });
     });
   });
+  describe('[T1.3] assignRoles', () => {
+    it('should throw an error if the game is not full', () => {
+      expect(() => game.assignRoles()).toThrowError(PLAYER_NOT_IN_GAME_MESSAGE);
+      // TODO weaker test suite only does one of these - above or below
+      const player1 = createPlayerForTesting();
+      game.join(player1);
+      expect(() => game.assignRoles()).toThrowError(PLAYER_NOT_IN_GAME_MESSAGE);
+      const player2 = createPlayerForTesting();
+      game.join(player2);
+      expect(() => game.assignRoles()).toThrowError(PLAYER_NOT_IN_GAME_MESSAGE);
+      const player3 = createPlayerForTesting();
+      game.join(player3);
+      expect(() => game.assignRoles()).toThrowError(PLAYER_NOT_IN_GAME_MESSAGE);
+      const player4 = createPlayerForTesting();
+      game.join(player4);
+      expect(() => game.assignRoles()).toThrowError(PLAYER_NOT_IN_GAME_MESSAGE);
+      const player5 = createPlayerForTesting();
+      game.join(player5);
+    });
+    it('should assign 3 villagers, 1 werewolf and 1 seer', () => {
+      const player1 = createPlayerForTesting();
+      game.join(player1);
+      const player2 = createPlayerForTesting();
+      game.join(player2);
+      const player3 = createPlayerForTesting();
+      game.join(player3);
+      const player4 = createPlayerForTesting();
+      game.join(player4);
+      const player5 = createPlayerForTesting();
+      game.join(player5);
+      game.assignRoles();
+      const roleValues = ['Werewolf','Seer','Villager'];
+      expect(roleValues).toContain(game.state.roles[0].role);
+      expect(roleValues).toContain(game.state.roles[1].role);
+      expect(roleValues).toContain(game.state.roles[2].role);
+      expect(roleValues).toContain(game.state.roles[3].role);
+      expect(roleValues).toContain(game.state.roles[4].role);
+    });
+
+    /*
+    game.assignRoles();
+      expect(game.state.roles[0]).toEqual('Werewolf');
+      expect(game.state.roles[1]).toEqual('Werewolf');
+      expect(game.state.roles[2]).toEqual('Werewolf');
+      expect(game.state.roles[3]).toEqual('Werewolf');
+      expect(game.state.roles[4]).toEqual('Werewolf');
+    */
+  });
+  /*
+  describe('[T1.4] playerIDToONWRole', () => {
+
+  });*/
+
   describe('[T1.3] Voting', () => {
 
     describe('isPlayerInGame', () => {
