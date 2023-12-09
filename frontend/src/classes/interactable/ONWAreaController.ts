@@ -227,4 +227,25 @@ export default class ONWAreaController extends GameAreaController<ONWGameState, 
       }
     }
   }
+
+  /**
+   * Pairs each player's ID with their assigned role in the game
+   */
+  private _pairPlayersWithRoles(): void {
+    const game = this._model.game;
+    if (!game) {
+      throw new Error(NO_GAME_IN_PROGRESS_ERROR);
+    }
+
+    const roles = game.state.roles || [];
+    const players = [this.player1, this.player2, this.player3, this.player4, this.player5];
+
+    for (let i = 0; i < roles.length; i++) {
+      const player = players[i];
+      if (player) {
+        roles[i] = roles[i] || {};
+        roles[i].playerID = player.id;
+      }
+    }
+  }
 }
