@@ -1,4 +1,14 @@
-import { chakra, Container, Heading, Text, useToast, Box } from '@chakra-ui/react';
+import {
+  chakra,
+  Container,
+  Heading,
+  Text,
+  useToast,
+  Box,
+  Button,
+  HStack,
+  VStack,
+} from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import ONWAreaController from '../../../../classes/interactable/ONWAreaController';
 import { ONWStatus, GameStatus } from '../../../../types/CoveyTownSocket';
@@ -173,9 +183,5 @@ export default function ONWBoard({ gameAreaController }: ONWGameProps): JSX.Elem
     }
   };
 
-  return (
-    <StyledONWBoard aria-label='One Night Werewolf'>
-      {renderScreen()}
-    </StyledONWBoard>
-  );
+  return <StyledONWBoard aria-label='One Night Werewolf'>{renderScreen()}</StyledONWBoard>;
 }
