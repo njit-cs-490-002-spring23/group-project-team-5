@@ -228,13 +228,15 @@ function ONWArea({ interactableID }: { interactableID: InteractableID }): JSX.El
         {gameStatusText}
       </Heading>
       <br></br>
-      <List aria-label='list of players in the game' textAlign='center'>
-        <ListItem>Player 1: {player1?.userName || '(No Player 1 yet!)'}</ListItem>
-        <ListItem>Player 2: {player2?.userName || '(No Player 2 yet!)'}</ListItem>
-        <ListItem>Player 3: {player3?.userName || '(No Player 3 yet!)'}</ListItem>
-        <ListItem>Player 4: {player4?.userName || '(No Player 4 yet!)'}</ListItem>
-        <ListItem>Player 5: {player5?.userName || '(No Player 5 yet!)'}</ListItem>
-      </List>
+      {gameStatus !== 'IN_PROGRESS' && (
+        <List aria-label='list of players in the game' textAlign='center'>
+          <ListItem>Player 1: {player1?.userName || '(No Player 1 yet!)'}</ListItem>
+          <ListItem>Player 2: {player2?.userName || '(No Player 2 yet!)'}</ListItem>
+          <ListItem>Player 3: {player3?.userName || '(No Player 3 yet!)'}</ListItem>
+          <ListItem>Player 4: {player4?.userName || '(No Player 4 yet!)'}</ListItem>
+          <ListItem>Player 5: {player5?.userName || '(No Player 5 yet!)'}</ListItem>
+        </List>
+      )}
       {gameStatus === 'IN_PROGRESS' && <ONWBoard gameAreaController={gameAreaController} />}
     </Container>
   );

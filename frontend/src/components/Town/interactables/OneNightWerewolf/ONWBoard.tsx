@@ -11,7 +11,8 @@ import {
 } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import ONWAreaController from '../../../../classes/interactable/ONWAreaController';
-import { ONWStatus, GameStatus } from '../../../../types/CoveyTownSocket';
+import { ONWStatus, GameStatus, ONWRole } from '../../../../types/CoveyTownSocket';
+import useTownController from '../../../../hooks/useTownController';
 
 export type ONWGameProps = {
   gameAreaController: ONWAreaController;
@@ -32,12 +33,18 @@ const WelcomePlayersScreen: React.FC = () => (
 
 // Custom component for the Role Assignment screen
 // eslint-disable-next-line @typescript-eslint/naming-convention
-const RoleAssignmentScreen: React.FC = () => (
+const RoleAssignmentScreen: React.FC<{ playerONWRole: ONWRole }> = ({ playerONWRole }) => (
   <Box textAlign='center' fontSize='xl'>
+    <Text mb={8} fontSize='5xl'>
+      Role Assignment
+    </Text>
+    <Text mb={8} fontSize='3xl'>
+      You are a {playerONWRole.role}
+    </Text>
     <Text mb={4}>Everyone is getting their roles.</Text>
+    <Text fontSize='lg'>{playerONWRole.description}</Text>
   </Box>
 );
-
 // Custom component for the Night screen
 // eslint-disable-next-line @typescript-eslint/naming-convention
 const NightScreen: React.FC = () => (
@@ -49,18 +56,22 @@ const NightScreen: React.FC = () => (
     <VStack spacing={4} align='center'>
       {/* Use Chakra UI Button for each player */}
       <HStack spacing={4}>
-        <Button variant='solid' colorScheme='teal'>
-          Player Name
-        </Button>
-        <Button variant='solid' colorScheme='teal'>
-          Player Name
-        </Button>
-        <Button variant='solid' colorScheme='teal'>
-          Player Name
-        </Button>
-        <Button variant='solid' colorScheme='teal'>
-          Player Name
-        </Button>
+        <VStack>
+          <Button variant='solid' colorScheme='teal'>
+            Player Name
+          </Button>
+          <Button variant='solid' colorScheme='teal'>
+            Player Name
+          </Button>
+        </VStack>
+        <VStack>
+          <Button variant='solid' colorScheme='teal'>
+            Player Name
+          </Button>
+          <Button variant='solid' colorScheme='teal'>
+            Player Name
+          </Button>
+        </VStack>
       </HStack>
     </VStack>
   </Box>
@@ -123,11 +134,18 @@ const StyledONWBoard = chakra(Container, {
 export default function ONWBoard({ gameAreaController }: ONWGameProps): JSX.Element {
   const [onwGameStatus, setONWgameStatus] = useState<ONWStatus>('WELCOME_PLAYERS'); // default start stage
   const [gameStatus, setGameStatus] = useState<GameStatus>(gameAreaController.status);
-
   const toast = useToast();
+  const townController = useTownController();
 
   useEffect(() => {
     console.log('Starting the ONW Game!');
+    gameAreaController.assignRoles();
+    gameAreaController.pairPlayersWithRoles();
+    console.log(`The current player's role is ${gameAreaController.playerONWRole.role}`);
+    console.log('playerONWRole:', gameAreaController.playerONWRole);
+
+    console.log(`The current player is ${townController.ourPlayer.userName}`);
+
     /*
      * This controlls the timing of the game
      */
@@ -152,22 +170,23 @@ export default function ONWBoard({ gameAreaController }: ONWGameProps): JSX.Elem
             }, 3000); // 3 seconds for DISCUSSION_TIME
           }, 3000); // 3 seconds for REVEAL_WHO_DIED
         }, 3000); // 3 seconds for NIGHT
-      }, 3000); // 3 seconds for ROLE_ASSIGNMENT
+      }, 20000); // 3 seconds for ROLE_ASSIGNMENT
     }
 
     gameAreaController.addListener('ONWgameUpdated', setONWgameStatus);
     return () => {
       gameAreaController.removeListener('ONWgameUpdated', setONWgameStatus);
     };
-  }, [gameAreaController]);
+  }, [townController, gameAreaController]);
 
+  // Function to render the appropriate screen based on onwGameStatus
   // Function to render the appropriate screen based on onwGameStatus
   const renderScreen = () => {
     switch (onwGameStatus) {
       case 'WELCOME_PLAYERS':
         return <WelcomePlayersScreen />;
       case 'ROLE_ASSIGNMENT':
-        return <RoleAssignmentScreen />;
+        return <RoleAssignmentScreen playerONWRole={gameAreaController.playerONWRole} />;
       case 'NIGHT':
         return <NightScreen />;
       case 'REVEAL_WHO_DIED':
