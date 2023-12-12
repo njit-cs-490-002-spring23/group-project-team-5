@@ -81,17 +81,6 @@ export default class ONWAreaController extends GameAreaController<ONWGameState, 
     return undefined;
   }
 
-  get currentPlayer(): PlayerController {
-    const currentPlayerID = this._townController.ourPlayer.id;
-
-    const currentPlayer = this.occupants.find(player => player.id === currentPlayerID);
-    if (currentPlayer) {
-      return currentPlayer;
-    }
-
-    throw new Error(PLAYER_NOT_IN_GAME_ERROR);
-  }
-
   /**
    * Returns true if the current player is a player in this game
    */
@@ -172,41 +161,37 @@ export default class ONWAreaController extends GameAreaController<ONWGameState, 
       throw new Error(NO_GAME_IN_PROGRESS_ERROR);
     }
 
-    const roleIndex = this.playerIDToONWRole(player);
-    const playerRole = game.state.roles[roleIndex] || {};
+    const playerIndex = this.playerIDToONWRole(player);
 
-    console.log(
-      `Checking role for Player ${roleIndex + 1} (${player.userName}): ${playerRole.role}`,
-    );
+    console.log(`Debug: playerIndex for ${player.userName} is ${playerIndex}`);
 
-    switch (playerRole.role) {
-      case 'Werewolf':
-        console.log('Player is a Werewolf');
-        return {
-          role: 'Werewolf',
-          seer_appearance: 'Werewolf',
-          immunity: true,
-          description:
-            'You are a Werewolf who is attempting to murder the villagers without being murdered at daytime. At night, you choose a player to kill.',
-        };
-      case 'Seer':
-        console.log('Player is a Seer');
-        return {
-          role: 'Seer',
-          seer_appearance: 'Not Werewolf',
-          immunity: false,
-          description:
-            'You are a Seer who is attempting to identify the Werewolf and murder them at daytime. At night, you choose a player to see if they are a werewolf.',
-        };
-      default:
-        console.log('Player is a Villager');
-        return {
-          role: 'Villager',
-          seer_appearance: 'Not Werewolf',
-          immunity: false,
-          description:
-            'You are a Villager who is attempting to identify the Werewolf and murder them at daytime. At night, you take no actions.',
-        };
+    if (playerIndex === 0) {
+      console.log(`Debug: ${player.userName} is a Werewolf`);
+      return {
+        role: 'Werewolf',
+        seer_appearance: 'Werewolf',
+        immunity: true,
+        description:
+          'You are a Werewolf who is attempting to murder the villagers without being murdered at daytime. At night, you choose a player to kill.',
+      };
+    } else if (playerIndex === 1) {
+      console.log(`Debug: ${player.userName} is a Seer`);
+      return {
+        role: 'Seer',
+        seer_appearance: 'Not Werewolf',
+        immunity: false,
+        description:
+          'You are a Seer who is attempting to identify the Werewolf and murder them at daytime. At night, you choose a player to see if they are a werewolf.',
+      };
+    } else {
+      console.log(`Debug: ${player.userName} is a Villager`);
+      return {
+        role: 'Villager',
+        seer_appearance: 'Not Werewolf',
+        immunity: false,
+        description:
+          'You are a Villager who is attempting to identify the Werewolf and murder them at daytime. At night, you take no actions.',
+      };
     }
   }
 
@@ -226,17 +211,29 @@ export default class ONWAreaController extends GameAreaController<ONWGameState, 
       const playerCount = 5;
       const roles: string[] = ['Villager', 'Villager', 'Villager', 'Seer', 'Werewolf'];
 
+      // Log the initial roles array for debugging
+      console.log('Initial roles array:', roles);
+
       // Shuffle the roles array to randomize the assignments
       for (let i = roles.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [roles[i], roles[j]] = [roles[j], roles[i]];
       }
 
+      // Log the shuffled roles array for debugging
+      console.log('Shuffled roles array:', roles);
+
       for (let i = 0; i < playerCount; i++) {
         const game = this._model.game;
         if (game !== undefined) {
           const role = roles[i];
+          // Ensure that game.state.roles array is initialized
+          game.state.roles[i] = game.state.roles[i] || {};
+
           game.state.roles[i].role = role;
+
+          // Add additional logging for debugging
+          console.log(`Player ${i + 1} role assignment: ${role}`);
 
           if (role === 'Werewolf') {
             game.state.roles[i].seer_appearance = 'Werewolf';
@@ -254,10 +251,8 @@ export default class ONWAreaController extends GameAreaController<ONWGameState, 
             game.state.roles[i].description =
               'You are a Villager who is attempting to identify the Werewolf and murder them at daytime. At night, you take no actions.';
           }
-
-          // Log the assigned role for each player
-          console.log(`Player ${i + 1} was assigned the role: ${role}`);
         }
+        console.log(`SECOND : Player ${i + 1} was assigned the role: ${game.state.roles[i].role}`);
       }
     }
   }
@@ -267,6 +262,7 @@ export default class ONWAreaController extends GameAreaController<ONWGameState, 
    */
   public playerIDToONWRole(player: Player): number {
     const game = this._model.game;
+    console.log('calling playerIDRole');
     if (
       game?.state.player1 !== player.id &&
       game?.state.player2 !== player.id &&

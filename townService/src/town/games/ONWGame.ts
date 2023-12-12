@@ -233,15 +233,6 @@ export default class ONWGame extends Game<ONWGameState, ONWMove> {
   }
 
   /**
-   * Initialize roles and player-to-role mappings
-   * calls both assignRoles() and playerIDtoONWRole
-   */
-  public initializeRoles(currentPlayer: Player): void {
-    this.assignRoles();
-    this.playerIDToONWRole(currentPlayer);
-  }
-
-  /**
    * Assigns player roles upon beggining the game.
    * Should assign 3 villagers, 1 seer and 1 werewolf at random
    *

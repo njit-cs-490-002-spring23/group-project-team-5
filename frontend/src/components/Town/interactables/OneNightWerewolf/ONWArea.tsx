@@ -107,7 +107,6 @@ function ONWArea({ interactableID }: { interactableID: InteractableID }): JSX.El
       setPlayer5(gameAreaController.player5);
 
       // Check if the game is in progress and roles are not assigned
-      // Check if the game is in progress and roles are not assigned
       if (gameAreaController.status === 'IN_PROGRESS' && !rolesAssigned) {
         try {
           await new Promise<void>(resolve => {
@@ -119,7 +118,6 @@ function ONWArea({ interactableID }: { interactableID: InteractableID }): JSX.El
           console.log('roles were assigned successfully!');
         } catch (error) {
           console.error('Error assigning roles:', error);
-          // Handle errors if needed
         }
       }
     };
