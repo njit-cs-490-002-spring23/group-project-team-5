@@ -50,29 +50,45 @@ const RoleAssignmentScreen: React.FC<{ playerONWRole: ONWRole }> = ({ playerONWR
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 // Custom component for the Night screen
-const NightScreen: React.FC<{ currentUsername: string; otherPlayerUsernames: string[] }> = ({
-  currentUsername,
-  otherPlayerUsernames,
-}) => (
-  <Box textAlign='center' fontSize='xl'>
-    <Text mb={4} fontSize='2xl' fontWeight='bold'>
-      Night Time
-    </Text>
-    <Text mb={4}>The creatures of the night awaken...</Text>
-    <VStack spacing={4} align='center'>
-      {/* Use Chakra UI Button for each player */}
-      <HStack spacing={4}>
-        <VStack>
-          {otherPlayerUsernames.map(username => (
-            <Button key={username} variant='solid' colorScheme='teal'>
-              {username}
-            </Button>
-          ))}
-        </VStack>
-      </HStack>
-    </VStack>
-  </Box>
-);
+const NightScreen: React.FC<{
+  currentUsername: string;
+  otherPlayerUsernames: string[];
+  playerRole: ONWRole;
+}> = ({ currentUsername, otherPlayerUsernames, playerRole }) => {
+  const getNightText = () => {
+    switch (playerRole.role) {
+      case 'Villager':
+        return 'Pray you survive the night! One of these people are a Werewolf.';
+      case 'Werewolf':
+        return 'Choose who you want to kill and defend yourself in the morning.';
+      case 'Seer':
+        return 'Choose one of these players to reveal their role.';
+      default:
+        return '';
+    }
+  };
+
+  return (
+    <Box textAlign='center' fontSize='xl'>
+      <Text mb={4} fontSize='2xl' fontWeight='bold'>
+        Night Time
+      </Text>
+      <Text mb={4}>{getNightText()}</Text>
+      <VStack spacing={4} align='center'>
+        {/* Use Chakra UI Button for each player */}
+        <HStack spacing={4}>
+          <VStack>
+            {otherPlayerUsernames.map(username => (
+              <Button key={username} variant='solid' colorScheme='teal'>
+                {username}
+              </Button>
+            ))}
+          </VStack>
+        </HStack>
+      </VStack>
+    </Box>
+  );
+};
 
 // Custom component for the Reveal Who Died screen
 // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -138,6 +154,7 @@ export default function ONWBoard({ gameAreaController }: ONWGameProps): JSX.Elem
   const otherPlayerUsernames = townController.players
     .filter(player => player.userName !== currentUserUsername)
     .map(player => player.userName);
+  const playerRole = gameAreaController.playerONWRole(townController.ourPlayer);
 
   useEffect(() => {
     console.log('The ONW Game started!');
@@ -169,8 +186,8 @@ export default function ONWBoard({ gameAreaController }: ONWGameProps): JSX.Elem
                 }, 3000); // 3 seconds for VOTE (3000 in milliseconds)
               }, 3000); // 3 seconds for DISCUSSION_TIME
             }, 3000); // 3 seconds for REVEAL_WHO_DIED
-          }, 3000); // 3 seconds for Ns\IGHT
-        }, 10000); // 3 seconds for ROLE_ASSIGNMENT
+          }, 10000); // 3 seconds for NIGHT
+        }, 100000); // 3 seconds for ROLE_ASSIGNMENT
       }, 3000); // 3 seconds for WELCOME
     }
 
@@ -181,22 +198,18 @@ export default function ONWBoard({ gameAreaController }: ONWGameProps): JSX.Elem
   }, [townController, gameAreaController]);
 
   // Function to render the appropriate screen based on onwGameStatus
-  // Function to render the appropriate screen based on onwGameStatus
   const renderScreen = () => {
     switch (onwGameStatus) {
       case 'WELCOME_PLAYERS':
         return <WelcomePlayersScreen />;
       case 'ROLE_ASSIGNMENT':
-        return (
-          <RoleAssignmentScreen
-            playerONWRole={gameAreaController.playerONWRole(townController.ourPlayer)}
-          />
-        );
+        return <RoleAssignmentScreen playerONWRole={playerRole} />;
       case 'NIGHT':
         return (
           <NightScreen
             currentUsername={currentUserUsername}
             otherPlayerUsernames={otherPlayerUsernames}
+            playerRole={playerRole}
           />
         );
       case 'REVEAL_WHO_DIED':
