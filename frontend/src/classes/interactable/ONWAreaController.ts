@@ -1,7 +1,14 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import _ from 'lodash';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { GameArea, GameStatus, ONWGameState, ONWStatus } from '../../types/CoveyTownSocket';
+import {
+  GameArea,
+  GameStatus,
+  ONWGameState,
+  ONWRole,
+  ONWStatus,
+  Player,
+} from '../../types/CoveyTownSocket';
 import PlayerController from '../PlayerController';
 import GameAreaController, { GameEventTypes } from './GameAreaController';
 
@@ -74,6 +81,17 @@ export default class ONWAreaController extends GameAreaController<ONWGameState, 
     return undefined;
   }
 
+  get currentPlayer(): PlayerController {
+    const currentPlayerID = this._townController.ourPlayer.id;
+
+    const currentPlayer = this.occupants.find(player => player.id === currentPlayerID);
+    if (currentPlayer) {
+      return currentPlayer;
+    }
+
+    throw new Error(PLAYER_NOT_IN_GAME_ERROR);
+  }
+
   /**
    * Returns true if the current player is a player in this game
    */
@@ -137,20 +155,132 @@ export default class ONWAreaController extends GameAreaController<ONWGameState, 
   }
 
   /**
-   * Changes the onwStatus to 'ROLE_ASSIGNMENT' if the current onwStatus is 'WELCOME_PLAYERS'
-   */
-  public changeONWStatus(): void {
-    if (this.onwStatus === 'WELCOME_PLAYERS') {
-      this._model.game!.state.onwStatus = 'ROLE_ASSIGNMENT';
-      this.emit('onwStatusChanged', 'ROLE_ASSIGNMENT');
-      console.log('We changed the status to');
-    }
-  }
-
-  /**
    * Returns true if the game is in progress
    */
   public isActive(): boolean {
     return this._model.game?.state.status === 'IN_PROGRESS';
+  }
+
+  /**
+   * Returns the role of the current player, if the current player is a player in this game
+   * Defaults to a generic Villager role
+   * Throws an error PLAYER_NOT_IN_GAME_ERROR if the current player is not a player in this game
+   */
+  public playerONWRole(player: Player): ONWRole {
+    const game = this._model.game;
+    if (!game) {
+      throw new Error(NO_GAME_IN_PROGRESS_ERROR);
+    }
+
+    const roleIndex = this.playerIDToONWRole(player);
+    const playerRole = game.state.roles[roleIndex] || {};
+
+    console.log(
+      `Checking role for Player ${roleIndex + 1} (${player.userName}): ${playerRole.role}`,
+    );
+
+    switch (playerRole.role) {
+      case 'Werewolf':
+        console.log('Player is a Werewolf');
+        return {
+          role: 'Werewolf',
+          seer_appearance: 'Werewolf',
+          immunity: true,
+          description:
+            'You are a Werewolf who is attempting to murder the villagers without being murdered at daytime. At night, you choose a player to kill.',
+        };
+      case 'Seer':
+        console.log('Player is a Seer');
+        return {
+          role: 'Seer',
+          seer_appearance: 'Not Werewolf',
+          immunity: false,
+          description:
+            'You are a Seer who is attempting to identify the Werewolf and murder them at daytime. At night, you choose a player to see if they are a werewolf.',
+        };
+      default:
+        console.log('Player is a Villager');
+        return {
+          role: 'Villager',
+          seer_appearance: 'Not Werewolf',
+          immunity: false,
+          description:
+            'You are a Villager who is attempting to identify the Werewolf and murder them at daytime. At night, you take no actions.',
+        };
+    }
+  }
+
+  /**
+   * Assigns player roles upon beggining the game.
+   * Should assign 3 villagers, 1 seer and 1 werewolf at random
+   *
+   * The ONWRoles list in ONWGame instance is in order corresponding to the player in that game.
+   *
+   * @throws InvalidParametersError if the game is not able to start due to lack of players (PLAYER_NOT_IN_GAME_MESSAGE)
+   */
+  public assignRoles(): void {
+    if (this._model.game?.state.status !== 'IN_PROGRESS') {
+      // throws error if game is not in progress
+      throw new Error(NO_GAME_IN_PROGRESS_ERROR);
+    } else {
+      const playerCount = 5;
+      const roles: string[] = ['Villager', 'Villager', 'Villager', 'Seer', 'Werewolf'];
+
+      // Shuffle the roles array to randomize the assignments
+      for (let i = roles.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [roles[i], roles[j]] = [roles[j], roles[i]];
+      }
+
+      for (let i = 0; i < playerCount; i++) {
+        const game = this._model.game;
+        if (game !== undefined) {
+          const role = roles[i];
+          game.state.roles[i].role = role;
+
+          if (role === 'Werewolf') {
+            game.state.roles[i].seer_appearance = 'Werewolf';
+            game.state.roles[i].immunity = true;
+            game.state.roles[i].description =
+              'You are a Werewolf who is attempting to murder the villagers without being murdered at daytime. At night, you choose a player to kill.';
+          } else if (role === 'Seer') {
+            game.state.roles[i].seer_appearance = 'Not Werewolf';
+            game.state.roles[i].immunity = false;
+            game.state.roles[i].description =
+              'You are a Seer who is attempting to identify the Werewolf and murder them at daytime. At night, you choose a player to see if they are a werewolf.';
+          } else {
+            game.state.roles[i].seer_appearance = 'Not Werewolf';
+            game.state.roles[i].immunity = false;
+            game.state.roles[i].description =
+              'You are a Villager who is attempting to identify the Werewolf and murder them at daytime. At night, you take no actions.';
+          }
+
+          // Log the assigned role for each player
+          console.log(`Player ${i + 1} was assigned the role: ${role}`);
+        }
+      }
+    }
+  }
+
+  /**
+   * Pairs each player's ID with their assigned role in the game
+   */
+  public playerIDToONWRole(player: Player): number {
+    const game = this._model.game;
+    if (
+      game?.state.player1 !== player.id &&
+      game?.state.player2 !== player.id &&
+      game?.state.player3 !== player.id &&
+      game?.state.player4 !== player.id &&
+      game?.state.player5 !== player.id
+    ) {
+      throw new Error(PLAYER_NOT_IN_GAME_ERROR);
+    }
+
+    if (game?.state.player1 === player.id) return 0;
+    if (game?.state.player2 === player.id) return 1;
+    if (game?.state.player3 === player.id) return 2;
+    if (game?.state.player4 === player.id) return 3;
+    return 4;
   }
 }
