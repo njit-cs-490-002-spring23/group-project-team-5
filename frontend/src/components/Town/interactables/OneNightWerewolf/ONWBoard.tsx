@@ -1,7 +1,20 @@
-import { chakra, Container, Heading, Text, useToast, Box } from '@chakra-ui/react';
+/* eslint-disable @typescript-eslint/naming-convention */
+import {
+  chakra,
+  Container,
+  Heading,
+  Text,
+  useToast,
+  Box,
+  Button,
+  HStack,
+  VStack,
+} from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import ONWAreaController from '../../../../classes/interactable/ONWAreaController';
-import { ONWStatus, GameStatus } from '../../../../types/CoveyTownSocket';
+import { ONWStatus, GameStatus, ONWRole } from '../../../../types/CoveyTownSocket';
+import useTownController from '../../../../hooks/useTownController';
+import { toString } from 'lodash';
 
 export type ONWGameProps = {
   gameAreaController: ONWAreaController;
@@ -10,7 +23,7 @@ export type ONWGameProps = {
 // Custom component for the Welcome Players screen
 // eslint-disable-next-line @typescript-eslint/naming-convention
 const WelcomePlayersScreen: React.FC = () => (
-  <Box textAlign='center' fontSize='4xl' fontFamily='fantasy' color='black'>
+  <Box textAlign='center' fontSize='4xl' color='black'>
     <Text mb={8} fontSize='xl'>
       welcome to
     </Text>
@@ -22,19 +35,60 @@ const WelcomePlayersScreen: React.FC = () => (
 
 // Custom component for the Role Assignment screen
 // eslint-disable-next-line @typescript-eslint/naming-convention
-const RoleAssignmentScreen: React.FC = () => (
+const RoleAssignmentScreen: React.FC<{ playerONWRole: ONWRole }> = ({ playerONWRole }) => (
   <Box textAlign='center' fontSize='xl'>
+    <Text mb={8} fontSize='5xl'>
+      Role Assignment
+    </Text>
+    <Text mb={8} fontSize='3xl'>
+      You are a {playerONWRole.role}
+    </Text>
     <Text mb={4}>Everyone is getting their roles.</Text>
+    <Text fontSize='lg'>{playerONWRole.description}</Text>
   </Box>
 );
 
-// Custom component for the Night screen
 // eslint-disable-next-line @typescript-eslint/naming-convention
-const NightScreen: React.FC = () => (
-  <Box textAlign='center' fontSize='xl'>
-    <Text mb={4}>It is night time!</Text>
-  </Box>
-);
+// Custom component for the Night screen
+const NightScreen: React.FC<{
+  currentUsername: string;
+  otherPlayerUsernames: string[];
+  playerRole: ONWRole;
+}> = ({ currentUsername, otherPlayerUsernames, playerRole }) => {
+  const getNightText = () => {
+    switch (playerRole.role) {
+      case 'Villager':
+        return 'Pray you survive the night! One of these people are a Werewolf.';
+      case 'Werewolf':
+        return 'Choose who you want to kill and defend yourself in the morning.';
+      case 'Seer':
+        return 'Choose one of these players to reveal their role.';
+      default:
+        return '';
+    }
+  };
+
+  return (
+    <Box textAlign='center' fontSize='xl'>
+      <Text mb={4} fontSize='2xl' fontWeight='bold'>
+        Night Time
+      </Text>
+      <Text mb={4}>{getNightText()}</Text>
+      <VStack spacing={4} align='center'>
+        {/* Use Chakra UI Button for each player */}
+        <HStack spacing={4}>
+          <VStack>
+            {otherPlayerUsernames.map(username => (
+              <Button key={username} variant='solid' colorScheme='teal'>
+                {username}
+              </Button>
+            ))}
+          </VStack>
+        </HStack>
+      </VStack>
+    </Box>
+  );
+};
 
 // Custom component for the Reveal Who Died screen
 // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -93,17 +147,29 @@ const StyledONWBoard = chakra(Container, {
 export default function ONWBoard({ gameAreaController }: ONWGameProps): JSX.Element {
   const [onwGameStatus, setONWgameStatus] = useState<ONWStatus>('WELCOME_PLAYERS'); // default start stage
   const [gameStatus, setGameStatus] = useState<GameStatus>(gameAreaController.status);
-
   const toast = useToast();
+  const townController = useTownController();
+  // Fetch other player usernames
+  const currentUserUsername = townController.ourPlayer.userName;
+  const otherPlayerUsernames = townController.players
+    .filter(player => player.userName !== currentUserUsername)
+    .map(player => player.userName);
+  const playerRole = gameAreaController.playerONWRole(townController.ourPlayer);
 
   useEffect(() => {
-    console.log('Starting the ONW Game!');
+    console.log('The ONW Game started!');
+
     /*
      * This controlls the timing of the game
      */
     if (gameAreaController.onwStatus === 'WELCOME_PLAYERS') {
       setTimeout(() => {
         setONWgameStatus('ROLE_ASSIGNMENT');
+        console.log(
+          `${townController.ourPlayer.userName}'s role is ${toString(
+            gameAreaController.playerONWRole(townController.ourPlayer),
+          )}`,
+        );
         setTimeout(() => {
           setONWgameStatus('NIGHT');
           setTimeout(() => {
@@ -116,20 +182,20 @@ export default function ONWBoard({ gameAreaController }: ONWGameProps): JSX.Elem
                   setONWgameStatus('END_SCREEN');
                   setTimeout(() => {
                     setGameStatus('OVER');
-                  }, 3000); // 3 seconds for OVER
-                }, 3000); // 3 seconds for END_SCREEN (3000 in milliseconds)
-              }, 3000); // 3 seconds for VOTE
-            }, 3000); // 3 seconds for DISCUSSION_TIME
-          }, 3000); // 3 seconds for REVEAL_WHO_DIED
-        }, 3000); // 3 seconds for NIGHT
-      }, 3000); // 3 seconds for ROLE_ASSIGNMENT
+                  }, 3000); // 3 seconds for END_SCREEN
+                }, 3000); // 3 seconds for VOTE (3000 in milliseconds)
+              }, 3000); // 3 seconds for DISCUSSION_TIME
+            }, 3000); // 3 seconds for REVEAL_WHO_DIED
+          }, 10000); // 3 seconds for NIGHT
+        }, 100000); // 3 seconds for ROLE_ASSIGNMENT
+      }, 3000); // 3 seconds for WELCOME
     }
 
     gameAreaController.addListener('ONWgameUpdated', setONWgameStatus);
     return () => {
       gameAreaController.removeListener('ONWgameUpdated', setONWgameStatus);
     };
-  }, [gameAreaController]);
+  }, [townController, gameAreaController]);
 
   // Function to render the appropriate screen based on onwGameStatus
   const renderScreen = () => {
@@ -137,9 +203,15 @@ export default function ONWBoard({ gameAreaController }: ONWGameProps): JSX.Elem
       case 'WELCOME_PLAYERS':
         return <WelcomePlayersScreen />;
       case 'ROLE_ASSIGNMENT':
-        return <RoleAssignmentScreen />;
+        return <RoleAssignmentScreen playerONWRole={playerRole} />;
       case 'NIGHT':
-        return <NightScreen />;
+        return (
+          <NightScreen
+            currentUsername={currentUserUsername}
+            otherPlayerUsernames={otherPlayerUsernames}
+            playerRole={playerRole}
+          />
+        );
       case 'REVEAL_WHO_DIED':
         return <RevealWhoDiedScreen />;
       case 'DISCUSSION_TIME':
@@ -153,9 +225,5 @@ export default function ONWBoard({ gameAreaController }: ONWGameProps): JSX.Elem
     }
   };
 
-  return (
-    <StyledONWBoard aria-label='One Night Werewolf'>
-      {renderScreen()}
-    </StyledONWBoard>
-  );
+  return <StyledONWBoard aria-label='One Night Werewolf'>{renderScreen()}</StyledONWBoard>;
 }

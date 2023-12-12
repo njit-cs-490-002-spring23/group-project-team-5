@@ -91,10 +91,11 @@ function ONWArea({ interactableID }: { interactableID: InteractableID }): JSX.El
   const [player3, setPlayer3] = useState<PlayerController | undefined>(gameAreaController.player3);
   const [player4, setPlayer4] = useState<PlayerController | undefined>(gameAreaController.player4);
   const [player5, setPlayer5] = useState<PlayerController | undefined>(gameAreaController.player5);
+  const [rolesAssigned, setRolesAssigned] = useState(false);
   const toast = useToast();
 
   useEffect(() => {
-    const updateGameState = () => {
+    const updateGameState = async () => {
       console.log('ONWArea event triggered');
       setHistory(gameAreaController.history);
       setGameStatus(gameAreaController.status || 'WAITING_TO_START');
@@ -104,7 +105,24 @@ function ONWArea({ interactableID }: { interactableID: InteractableID }): JSX.El
       setPlayer3(gameAreaController.player3);
       setPlayer4(gameAreaController.player4);
       setPlayer5(gameAreaController.player5);
+
+      // Check if the game is in progress and roles are not assigned
+      if (gameAreaController.status === 'IN_PROGRESS' && !rolesAssigned) {
+        try {
+          await new Promise<void>(resolve => {
+            gameAreaController.assignRoles();
+            // gameAreaController.playerIDToONWRole();
+            resolve();
+          });
+          setRolesAssigned(true);
+          console.log('roles were assigned successfully!');
+        } catch (error) {
+          console.error('Error assigning roles:', error);
+        }
+      }
     };
+
+    updateGameState();
 
     gameAreaController.addListener('gameUpdated', updateGameState);
     const onGameEnd = () => {
@@ -135,7 +153,7 @@ function ONWArea({ interactableID }: { interactableID: InteractableID }): JSX.El
       gameAreaController.removeListener('gameEnd', onGameEnd);
       gameAreaController.removeListener('gameUpdated', updateGameState);
     };
-  }, [townController, gameAreaController, toast, gameStatus]);
+  }, [townController, gameAreaController, toast, gameStatus, rolesAssigned]);
 
   let gameStatusText = <></>;
   if (gameStatus === 'IN_PROGRESS') {
@@ -228,13 +246,15 @@ function ONWArea({ interactableID }: { interactableID: InteractableID }): JSX.El
         {gameStatusText}
       </Heading>
       <br></br>
-      <List aria-label='list of players in the game' textAlign='center'>
-        <ListItem>Player 1: {player1?.userName || '(No Player 1 yet!)'}</ListItem>
-        <ListItem>Player 2: {player2?.userName || '(No Player 2 yet!)'}</ListItem>
-        <ListItem>Player 3: {player3?.userName || '(No Player 3 yet!)'}</ListItem>
-        <ListItem>Player 4: {player4?.userName || '(No Player 4 yet!)'}</ListItem>
-        <ListItem>Player 5: {player5?.userName || '(No Player 5 yet!)'}</ListItem>
-      </List>
+      {gameStatus !== 'IN_PROGRESS' && (
+        <List aria-label='list of players in the game' textAlign='center'>
+          <ListItem>Player 1: {player1?.userName || '(No Player 1 yet!)'}</ListItem>
+          <ListItem>Player 2: {player2?.userName || '(No Player 2 yet!)'}</ListItem>
+          <ListItem>Player 3: {player3?.userName || '(No Player 3 yet!)'}</ListItem>
+          <ListItem>Player 4: {player4?.userName || '(No Player 4 yet!)'}</ListItem>
+          <ListItem>Player 5: {player5?.userName || '(No Player 5 yet!)'}</ListItem>
+        </List>
+      )}
       {gameStatus === 'IN_PROGRESS' && <ONWBoard gameAreaController={gameAreaController} />}
     </Container>
   );

@@ -334,7 +334,7 @@ describe('OneNightWerewolf', () => {
       const player5 = createPlayerForTesting();
       game.join(player5);
       game.assignRoles();
-      const roleValues = ['Werewolf','Seer','Villager'];
+      const roleValues = ['Werewolf', 'Seer', 'Villager'];
       expect(roleValues).toContain(game.state.roles[0].role);
       expect(roleValues).toContain(game.state.roles[1].role);
       expect(roleValues).toContain(game.state.roles[2].role);
@@ -354,17 +354,16 @@ describe('OneNightWerewolf', () => {
   /*
   describe('[T1.4] playerIDToONWRole', () => {
 
-  });*/
+  }); */
 
   describe('[T1.3] Voting', () => {
-
     describe('isPlayerInGame', () => {
       it('should return true if the player is in the game', () => {
         const player1 = createPlayerForTesting();
         game.join(player1);
         expect(game.isPlayerInGame(player1)).toBe(true);
       });
-  
+
       it('should return false if the player is not in the game', () => {
         const player1 = createPlayerForTesting();
         expect(game.isPlayerInGame(player1)).toBe(false);
@@ -385,8 +384,8 @@ describe('OneNightWerewolf', () => {
         game.join(player5);
         const players = game.getPlayers();
         expect(players).toHaveLength(5);
-      })
-    })
+      });
+    });
 
     describe('getPlayerByID', () => {
       it('should return the id of the player in string format', () => {
@@ -395,23 +394,22 @@ describe('OneNightWerewolf', () => {
 
         expect(game.state.player1).toEqual(player1.id);
       });
-    })
+    });
 
     describe('handleVote', () => {
-      it('should update the vote count and handle the vote result correctly', () =>{
+      it('should update the vote count and handle the vote result correctly', () => {
         const player1 = createPlayerForTesting();
         const player2 = createPlayerForTesting();
         game.join(player1);
         game.join(player2);
 
         // player2 votes player1
-        game.handleVote(player2,player1);
+        game.handleVote(player2, player1);
 
         // player1 vote should be 1
         expect(game.voteCount[player1.id]).toEqual(1);
-      })
-    })
-
+      });
+    });
 
     // it('should record the vote for the specified player', () => {
     //   //Creating players and making them join the game

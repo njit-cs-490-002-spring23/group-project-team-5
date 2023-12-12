@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import InvalidParametersError, {
   GAME_FULL_MESSAGE,
+  GAME_NOT_IN_PROGRESS_MESSAGE,
   PLAYER_ALREADY_IN_GAME_MESSAGE,
   PLAYER_NOT_IN_GAME_MESSAGE,
 } from '../../lib/InvalidParametersError';
@@ -242,7 +243,7 @@ export default class ONWGame extends Game<ONWGameState, ONWMove> {
   public assignRoles(): void {
     if (this.state.status !== 'IN_PROGRESS') {
       // throws error if game is not in progress
-      throw new InvalidParametersError(PLAYER_NOT_IN_GAME_MESSAGE);
+      throw new InvalidParametersError(GAME_NOT_IN_PROGRESS_MESSAGE);
     } else {
       // game is confirmed to be in progress and has 5 players
 
@@ -292,7 +293,7 @@ export default class ONWGame extends Game<ONWGameState, ONWMove> {
    * @throws InvalidParametersError if the player is not in the game (PLAYER_NOT_IN_GAME_MESSAGE)
    * @returns number representing the index of the ONWRole roles array in this.state
    */
-  private _playerIDToONWRole(player: Player): number {
+  public playerIDToONWRole(player: Player): number {
     if (
       this.state.player1 !== player.id &&
       this.state.player2 !== player.id &&
