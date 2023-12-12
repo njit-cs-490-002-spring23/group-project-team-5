@@ -91,10 +91,11 @@ function ONWArea({ interactableID }: { interactableID: InteractableID }): JSX.El
   const [player3, setPlayer3] = useState<PlayerController | undefined>(gameAreaController.player3);
   const [player4, setPlayer4] = useState<PlayerController | undefined>(gameAreaController.player4);
   const [player5, setPlayer5] = useState<PlayerController | undefined>(gameAreaController.player5);
+  const [rolesAssigned, setRolesAssigned] = useState(false);
   const toast = useToast();
 
   useEffect(() => {
-    const updateGameState = () => {
+    const updateGameState = async () => {
       console.log('ONWArea event triggered');
       setHistory(gameAreaController.history);
       setGameStatus(gameAreaController.status || 'WAITING_TO_START');
@@ -104,7 +105,26 @@ function ONWArea({ interactableID }: { interactableID: InteractableID }): JSX.El
       setPlayer3(gameAreaController.player3);
       setPlayer4(gameAreaController.player4);
       setPlayer5(gameAreaController.player5);
+
+      // Check if the game is in progress and roles are not assigned
+      // Check if the game is in progress and roles are not assigned
+      if (gameAreaController.status === 'IN_PROGRESS' && !rolesAssigned) {
+        try {
+          await new Promise<void>(resolve => {
+            gameAreaController.assignRoles();
+            // gameAreaController.playerIDToONWRole();
+            resolve();
+          });
+          setRolesAssigned(true);
+          console.log('roles were assigned successfully!');
+        } catch (error) {
+          console.error('Error assigning roles:', error);
+          // Handle errors if needed
+        }
+      }
     };
+
+    updateGameState();
 
     gameAreaController.addListener('gameUpdated', updateGameState);
     const onGameEnd = () => {
@@ -135,7 +155,7 @@ function ONWArea({ interactableID }: { interactableID: InteractableID }): JSX.El
       gameAreaController.removeListener('gameEnd', onGameEnd);
       gameAreaController.removeListener('gameUpdated', updateGameState);
     };
-  }, [townController, gameAreaController, toast, gameStatus]);
+  }, [townController, gameAreaController, toast, gameStatus, rolesAssigned]);
 
   let gameStatusText = <></>;
   if (gameStatus === 'IN_PROGRESS') {

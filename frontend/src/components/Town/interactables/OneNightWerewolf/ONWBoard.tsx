@@ -13,6 +13,7 @@ import React, { useEffect, useState } from 'react';
 import ONWAreaController from '../../../../classes/interactable/ONWAreaController';
 import { ONWStatus, GameStatus, ONWRole } from '../../../../types/CoveyTownSocket';
 import useTownController from '../../../../hooks/useTownController';
+import { toString } from 'lodash';
 
 export type ONWGameProps = {
   gameAreaController: ONWAreaController;
@@ -138,20 +139,20 @@ export default function ONWBoard({ gameAreaController }: ONWGameProps): JSX.Elem
   const townController = useTownController();
 
   useEffect(() => {
-    console.log('Starting the ONW Game!');
-    gameAreaController.assignRoles();
-    gameAreaController.pairPlayersWithRoles();
-    console.log(`The current player's role is ${gameAreaController.playerONWRole.role}`);
-    console.log('playerONWRole:', gameAreaController.playerONWRole);
-
-    console.log(`The current player is ${townController.ourPlayer.userName}`);
+    console.log('The ONW Game started!');
 
     /*
      * This controlls the timing of the game
      */
     if (gameAreaController.onwStatus === 'WELCOME_PLAYERS') {
+      console.log('We made it to status [WELCOME_PLAYERS]');
       setTimeout(() => {
         setONWgameStatus('ROLE_ASSIGNMENT');
+        console.log(
+          `${townController.ourPlayer.userName}'s role is ${toString(
+            gameAreaController.playerONWRole(townController.ourPlayer),
+          )}`,
+        );
         setTimeout(() => {
           setONWgameStatus('NIGHT');
           setTimeout(() => {
@@ -164,13 +165,13 @@ export default function ONWBoard({ gameAreaController }: ONWGameProps): JSX.Elem
                   setONWgameStatus('END_SCREEN');
                   setTimeout(() => {
                     setGameStatus('OVER');
-                  }, 3000); // 3 seconds for OVER
-                }, 3000); // 3 seconds for END_SCREEN (3000 in milliseconds)
-              }, 3000); // 3 seconds for VOTE
-            }, 3000); // 3 seconds for DISCUSSION_TIME
-          }, 3000); // 3 seconds for REVEAL_WHO_DIED
-        }, 3000); // 3 seconds for NIGHT
-      }, 20000); // 3 seconds for ROLE_ASSIGNMENT
+                  }, 3000); // 3 seconds for END_SCREEN
+                }, 3000); // 3 seconds for VOTE (3000 in milliseconds)
+              }, 3000); // 3 seconds for DISCUSSION_TIME
+            }, 3000); // 3 seconds for REVEAL_WHO_DIED
+          }, 3000); // 3 seconds for Ns\IGHT
+        }, 10000); // 3 seconds for ROLE_ASSIGNMENT
+      }, 3000); // 3 seconds for WELCOME
     }
 
     gameAreaController.addListener('ONWgameUpdated', setONWgameStatus);
@@ -186,7 +187,11 @@ export default function ONWBoard({ gameAreaController }: ONWGameProps): JSX.Elem
       case 'WELCOME_PLAYERS':
         return <WelcomePlayersScreen />;
       case 'ROLE_ASSIGNMENT':
-        return <RoleAssignmentScreen playerONWRole={gameAreaController.playerONWRole} />;
+        return (
+          <RoleAssignmentScreen
+            playerONWRole={gameAreaController.playerONWRole(townController.ourPlayer)}
+          />
+        );
       case 'NIGHT':
         return <NightScreen />;
       case 'REVEAL_WHO_DIED':
