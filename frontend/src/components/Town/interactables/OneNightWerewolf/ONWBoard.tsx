@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import {
   chakra,
   Container,
@@ -22,7 +23,7 @@ export type ONWGameProps = {
 // Custom component for the Welcome Players screen
 // eslint-disable-next-line @typescript-eslint/naming-convention
 const WelcomePlayersScreen: React.FC = () => (
-  <Box textAlign='center' fontSize='4xl' fontFamily='fantasy' color='black'>
+  <Box textAlign='center' fontSize='4xl' color='black'>
     <Text mb={8} fontSize='xl'>
       welcome to
     </Text>
@@ -46,9 +47,13 @@ const RoleAssignmentScreen: React.FC<{ playerONWRole: ONWRole }> = ({ playerONWR
     <Text fontSize='lg'>{playerONWRole.description}</Text>
   </Box>
 );
-// Custom component for the Night screen
+
 // eslint-disable-next-line @typescript-eslint/naming-convention
-const NightScreen: React.FC = () => (
+// Custom component for the Night screen
+const NightScreen: React.FC<{ currentUsername: string; otherPlayerUsernames: string[] }> = ({
+  currentUsername,
+  otherPlayerUsernames,
+}) => (
   <Box textAlign='center' fontSize='xl'>
     <Text mb={4} fontSize='2xl' fontWeight='bold'>
       Night Time
@@ -58,20 +63,11 @@ const NightScreen: React.FC = () => (
       {/* Use Chakra UI Button for each player */}
       <HStack spacing={4}>
         <VStack>
-          <Button variant='solid' colorScheme='teal'>
-            Player Name
-          </Button>
-          <Button variant='solid' colorScheme='teal'>
-            Player Name
-          </Button>
-        </VStack>
-        <VStack>
-          <Button variant='solid' colorScheme='teal'>
-            Player Name
-          </Button>
-          <Button variant='solid' colorScheme='teal'>
-            Player Name
-          </Button>
+          {otherPlayerUsernames.map(username => (
+            <Button key={username} variant='solid' colorScheme='teal'>
+              {username}
+            </Button>
+          ))}
         </VStack>
       </HStack>
     </VStack>
@@ -137,6 +133,11 @@ export default function ONWBoard({ gameAreaController }: ONWGameProps): JSX.Elem
   const [gameStatus, setGameStatus] = useState<GameStatus>(gameAreaController.status);
   const toast = useToast();
   const townController = useTownController();
+  // Fetch other player usernames
+  const currentUserUsername = townController.ourPlayer.userName;
+  const otherPlayerUsernames = townController.players
+    .filter(player => player.userName !== currentUserUsername)
+    .map(player => player.userName);
 
   useEffect(() => {
     console.log('The ONW Game started!');
@@ -145,7 +146,6 @@ export default function ONWBoard({ gameAreaController }: ONWGameProps): JSX.Elem
      * This controlls the timing of the game
      */
     if (gameAreaController.onwStatus === 'WELCOME_PLAYERS') {
-      console.log('We made it to status [WELCOME_PLAYERS]');
       setTimeout(() => {
         setONWgameStatus('ROLE_ASSIGNMENT');
         console.log(
@@ -193,7 +193,12 @@ export default function ONWBoard({ gameAreaController }: ONWGameProps): JSX.Elem
           />
         );
       case 'NIGHT':
-        return <NightScreen />;
+        return (
+          <NightScreen
+            currentUsername={currentUserUsername}
+            otherPlayerUsernames={otherPlayerUsernames}
+          />
+        );
       case 'REVEAL_WHO_DIED':
         return <RevealWhoDiedScreen />;
       case 'DISCUSSION_TIME':
