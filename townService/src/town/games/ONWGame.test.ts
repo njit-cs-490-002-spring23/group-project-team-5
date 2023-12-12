@@ -1,3 +1,4 @@
+import { create } from 'domain';
 import { createPlayerForTesting } from '../../TestUtils';
 import {
   GAME_FULL_MESSAGE,
@@ -411,6 +412,26 @@ describe('OneNightWerewolf', () => {
         expect(game.voteCount[player1.id]).toEqual(1);
       })
     })
+
+    describe('ONWGame handleVote method', () => {
+      const player1 = createPlayerForTesting();
+      const player2 = createPlayerForTesting();
+      const player3 = createPlayerForTesting();    
+      beforeEach(() => {
+        game.join(player1);
+        game.join(player2);
+        game.join(player3);
+      });
+    
+      it('should correctly tally votes', () => {
+        game.handleVote(player1, player2);
+        game.handleVote(player3, player2);
+    
+        expect(game.voteCount[player2.id]).toBe(2);
+        expect(game.voteCount[player1.id]).toBeUndefined();
+      });
+      // Additional tests can be written to cover more scenarios
+    });
 
 
     // it('should record the vote for the specified player', () => {
