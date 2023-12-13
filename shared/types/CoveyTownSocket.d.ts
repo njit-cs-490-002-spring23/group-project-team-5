@@ -1,3 +1,9 @@
+/*
+*
+* Based on https://github.com/neu-se/covey.town
+*
+*/
+
 export type TownJoinResponse = {
   /** Unique ID that represents this player * */
   userID: string;

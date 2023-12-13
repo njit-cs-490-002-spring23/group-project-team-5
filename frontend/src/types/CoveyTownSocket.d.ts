@@ -3,6 +3,8 @@ To avoid ripping-off the bandaid and switching to a proper multi-module workspac
 we are sharing type definitions only, using tsconfig.json "references" to the shared project.
 We still want to prevent relative package imports otherwise using ESLint, because importing anything
 besides type declarations could become problematic from a compilation perspective.
+
+Based on https://github.com/neu-se/covey.town
 */
 
 import { Socket } from 'socket.io-client';
