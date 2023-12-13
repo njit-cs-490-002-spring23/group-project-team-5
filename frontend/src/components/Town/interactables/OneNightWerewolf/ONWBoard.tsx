@@ -134,7 +134,6 @@ const VoteScreen: React.FC<{
         <Button colorScheme='orange'>Player 2</Button>
         <Button colorScheme='orange'>Player 3</Button>
         <Button colorScheme='orange'>Player 4</Button>
-        <Button colorScheme='orange'>Player 5</Button>
       </VStack>
     </Box>
   );
