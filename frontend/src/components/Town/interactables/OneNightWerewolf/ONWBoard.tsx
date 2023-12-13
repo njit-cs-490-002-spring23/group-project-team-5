@@ -106,6 +106,7 @@ export default function ONWBoard({ gameAreaController }: ONWGameProps): JSX.Elem
   const [onwGameStatus, setONWgameStatus] = useState<ONWStatus>('WELCOME_PLAYERS'); // default start stage
   const [gameStatus, setGameStatus] = useState<GameStatus>(gameAreaController.status);
   const toast = useToast();
+  const [selectedPlayer, setSelectedPlayer] = useState<string | null>(null);
   const townController = useTownController();
 
   // Fetch other player usernames
@@ -129,6 +130,7 @@ export default function ONWBoard({ gameAreaController }: ONWGameProps): JSX.Elem
           return '';
       }
     };
+
     const getOtherPlayerRole = (username: string) => {
       const otherPlayer = townController.players.find(player => player.userName === username);
       if (otherPlayer) {
@@ -136,6 +138,9 @@ export default function ONWBoard({ gameAreaController }: ONWGameProps): JSX.Elem
         return otherPlayerRole.role;
       }
       return '';
+    };
+    const handleButtonClick = (username: string) => {
+      setSelectedPlayer(username);
     };
 
     const renderOtherPlayersRoles = () => {
@@ -145,8 +150,12 @@ export default function ONWBoard({ gameAreaController }: ONWGameProps): JSX.Elem
             <HStack spacing={4}>
               <VStack>
                 {otherPlayerUsernames.map(username => (
-                  <Button key={username} variant='solid' colorScheme='teal'>
-                    {`${username}: ${getOtherPlayerRole(username)}`}
+                  <Button
+                    key={username}
+                    variant='solid'
+                    colorScheme='teal'
+                    onClick={() => handleButtonClick(username)}>
+                    {username}
                   </Button>
                 ))}
               </VStack>
@@ -163,6 +172,9 @@ export default function ONWBoard({ gameAreaController }: ONWGameProps): JSX.Elem
           Night Time
         </Text>
         <Text mb={4}>{getNightText()}</Text>
+        {selectedPlayer && (
+          <Text mb={4}>{`${selectedPlayer}'s role is: ${getOtherPlayerRole(selectedPlayer)}`}</Text>
+        )}
         {renderOtherPlayersRoles()}
       </Box>
     );
@@ -204,7 +216,7 @@ export default function ONWBoard({ gameAreaController }: ONWGameProps): JSX.Elem
                 }, 5000); // 3 seconds for VOTE (3000 in milliseconds)
               }, 5000); // 3 seconds for DISCUSSION_TIME
             }, 5000); // 3 seconds for REVEAL_WHO_DIED
-          }, 5000); // 3 seconds for NIGHT
+          }, 10000); // 3 seconds for NIGHT
         }, 5000); // 3 seconds for ROLE_ASSIGNMENT
       }, 5000); // 3 seconds for WELCOME
     }

@@ -34,9 +34,11 @@ import ONWLeaderboard from '../Leaderboard';
 import ONWBoard from './ONWBoard';
 
 /**
+ * Based on https://github.com/neu-se/covey.town
+ * 
  * The ONWArea component renders the ONW game area.
  * It renders the current state of the area, optionally allowing the player to join the game.
- *
+ * 
  * It uses Chakra-UI components (does not use other GUI widgets)
  *
  * It uses the ONWAreaController to get the current state of the game.
