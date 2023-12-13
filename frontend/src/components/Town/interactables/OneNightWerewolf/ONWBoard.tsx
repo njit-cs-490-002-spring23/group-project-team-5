@@ -82,8 +82,20 @@ const VoteScreen: React.FC<{
     setVoteConfirmation(`${currentUsername} voted for ${targetUsername}`);
   };
   return (
-    <Box textAlign='center' fontSize='xl'>
-      <Text mb={4}>Voting time!</Text>
+    <Box textAlign='center' fontSize='xl' p={5}>
+      <Text mb={2} fontSize='2xl' fontWeight='bold'>
+        Voting Time
+      </Text>
+      <Text mb={4} fontSize='lg'>
+        Select the player you would like to vote for!
+      </Text>
+      <VStack spacing={3}>
+        <Button colorScheme='teal'>Player 1</Button>
+        <Button colorScheme='teal'>Player 2</Button>
+        <Button colorScheme='teal'>Player 3</Button>
+        <Button colorScheme='teal'>Player 4</Button>
+        <Button colorScheme='teal'>Player 5</Button>
+      </VStack>
     </Box>
   );
 };
