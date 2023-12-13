@@ -15,6 +15,7 @@ import ONWAreaController from '../../../../classes/interactable/ONWAreaControlle
 import { ONWStatus, GameStatus, ONWRole } from '../../../../types/CoveyTownSocket';
 import useTownController from '../../../../hooks/useTownController';
 import { toString } from 'lodash';
+import ONWGame from '../../../../../../townService/src/town/games/ONWGame';
 
 export type ONWGameProps = {
   gameAreaController: ONWAreaController;
@@ -106,13 +107,44 @@ const DiscussionTimeScreen: React.FC = () => (
   </Box>
 );
 
+
+
 // Custom component for the Vote screen
 // eslint-disable-next-line @typescript-eslint/naming-convention
-const VoteScreen: React.FC = () => (
-  <Box textAlign='center' fontSize='xl'>
-    <Text mb={4}>Voting time!</Text>
-  </Box>
-);
+const VoteScreen: React.FC<{
+  currentUsername: string;
+  otherPlayerUsernames?: string[]; 
+  playerRole: ONWRole;
+}> = ({ currentUsername, otherPlayerUsernames, playerRole }) => {
+
+  const [voteConfirmation, setVoteConfirmation] = useState('');
+
+  const handleVoteClick = (targetUsername) => {
+    ONWAreaController.handleVote(currentUsername, targetUsername);
+    setVoteConfirmation(`${currentUsername} voted for ${targetUsername}`);
+  };
+  return (
+    <Box textAlign='center' fontSize='xl'>
+      <Text mb={4}>Voting time!</Text>
+      {otherPlayerUsernames.map(username => (
+        <Button 
+          key={username} 
+          mb={2} 
+          variant='solid' 
+          colorScheme='teal' 
+          onClick={() => handleVoteClick(username)}
+        >
+          Vote {username}
+        </Button>
+      ))}
+      {voteConfirmation && (
+        <Text mt={4}>{voteConfirmation}</Text>
+      )}
+    </Box>
+  );
+};
+
+
 
 // Custom component for the End Screen
 // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -206,30 +238,32 @@ export default function ONWBoard({ gameAreaController }: ONWGameProps): JSX.Elem
 
   // Function to render the appropriate screen based on onwGameStatus
   const renderScreen = () => {
-    switch (onwGameStatus) {
-      case 'WELCOME_PLAYERS':
-        return <WelcomePlayersScreen />;
-      case 'ROLE_ASSIGNMENT':
-        return <RoleAssignmentScreen playerONWRole={playerRole} />;
-      case 'NIGHT':
-        return (
-          <NightScreen
-            currentUsername={currentUserUsername}
-            otherPlayerUsernames={otherPlayerUsernames}
-            playerRole={playerRole}
-          />
-        );
-      case 'REVEAL_WHO_DIED':
-        return <RevealWhoDiedScreen />;
-      case 'DISCUSSION_TIME':
-        return <DiscussionTimeScreen />;
-      case 'VOTE':
-        return <VoteScreen />;
-      case 'END_SCREEN':
-        return <EndScreen />;
-      default:
-        return null;
-    }
+    return <VoteScreen />;
+
+    // switch (onwGameStatus) {
+    //   case 'WELCOME_PLAYERS':
+    //     return <WelcomePlayersScreen />;
+    //   case 'ROLE_ASSIGNMENT':
+    //     return <RoleAssignmentScreen playerONWRole={playerRole} />;
+    //   case 'NIGHT':
+    //     return (
+    //       <NightScreen
+    //         currentUsername={currentUserUsername}
+    //         otherPlayerUsernames={otherPlayerUsernames}
+    //         playerRole={playerRole}
+    //       />
+    //     );
+    //   case 'REVEAL_WHO_DIED':
+    //     return <RevealWhoDiedScreen />;
+    //   case 'DISCUSSION_TIME':
+    //     return <DiscussionTimeScreen />;
+    //   case 'VOTE':
+    //     return <VoteScreen />;
+    //   case 'END_SCREEN':
+    //     return <EndScreen />;
+    //   default:
+    //     return null;
+    // }
   };
 
   return <StyledONWBoard aria-label='One Night Werewolf'>{renderScreen()}</StyledONWBoard>;

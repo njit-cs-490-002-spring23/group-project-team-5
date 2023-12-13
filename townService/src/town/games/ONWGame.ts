@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import InvalidParametersError, {
   GAME_FULL_MESSAGE,
-  GAME_NOT_IN_PROGRESS_MESSAGE,
   PLAYER_ALREADY_IN_GAME_MESSAGE,
   PLAYER_NOT_IN_GAME_MESSAGE,
 } from '../../lib/InvalidParametersError';
@@ -93,11 +92,11 @@ export default class ONWGame extends Game<ONWGameState, ONWMove> {
       throw new InvalidParametersError(GAME_FULL_MESSAGE);
     }
     if (
-      this.state.player1 &&
+      this.state.player1 /* &&
       this.state.player2 &&
       this.state.player3 &&
       this.state.player4 &&
-      this.state.player5
+      this.state.player5 */
     ) {
       this.state = {
         ...this.state,
@@ -137,8 +136,7 @@ export default class ONWGame extends Game<ONWGameState, ONWMove> {
         player5: undefined,
       };
     }
-    if (this.state.player2 === undefined) {
-      // YOU NEED TO CHANGE THIS
+    if (this.state.player5 === undefined) {
       // Game not yet started, set status to 'WAITING_TO_START' and reset all players
       this.state = {
         status: 'WAITING_TO_START',
@@ -187,10 +185,7 @@ export default class ONWGame extends Game<ONWGameState, ONWMove> {
     return this.playersMap[playerID];
   }
 
-  // private getPlayerByIDDirect(playerID: string): Player | undefined {
-  //   // Access the state directly to avoid recursion
-  //   return this.players.find(player => player.id === playerID);
-  // }
+  
 
   /**
    Handles a vote from a player to kick another player.
@@ -244,7 +239,7 @@ export default class ONWGame extends Game<ONWGameState, ONWMove> {
   public assignRoles(): void {
     if (this.state.status !== 'IN_PROGRESS') {
       // throws error if game is not in progress
-      throw new InvalidParametersError(GAME_NOT_IN_PROGRESS_MESSAGE);
+      throw new InvalidParametersError(PLAYER_NOT_IN_GAME_MESSAGE);
     } else {
       // game is confirmed to be in progress and has 5 players
 
@@ -294,7 +289,7 @@ export default class ONWGame extends Game<ONWGameState, ONWMove> {
    * @throws InvalidParametersError if the player is not in the game (PLAYER_NOT_IN_GAME_MESSAGE)
    * @returns number representing the index of the ONWRole roles array in this.state
    */
-  public playerIDToONWRole(player: Player): number {
+  private _playerIDToONWRole(player: Player): number {
     if (
       this.state.player1 !== player.id &&
       this.state.player2 !== player.id &&

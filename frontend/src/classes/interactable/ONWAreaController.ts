@@ -253,6 +253,47 @@ export default class ONWAreaController extends GameAreaController<ONWGameState, 
   }
 
   /**
+   Handles a vote from a player to kick another player.
+   Updates the game state to refelct the vote
+   @param voter The player casting the vote
+   @param target The player being voted against
+   @throws InvalidParametersError if the voter or target is not in the game
+  * */
+   public handleVote(voter: Player, target: Player): void {
+    if (!this.isPlayerInGame(voter) || !this.isPlayerInGame(target) || voter.id === target.id) {
+      throw new InvalidParametersError('Invalid vote parameters');
+    }
+
+    // Update the vote count for the target player
+    this.voteCount[target.id] = (this.voteCount[target.id] || 0) + 1;
+
+    if (Object.keys(this.voteCount).length === this.getPlayers().length) {
+      // Figuring out who has the most votes.
+      const playerWithMostVotes = Object.keys(this.voteCount).reduce((prevPlayer, currentPlayer) =>
+        this.voteCount[currentPlayer] > this.voteCount[prevPlayer] ? currentPlayer : prevPlayer,
+      );
+
+      this._handleVoteResult(playerWithMostVotes);
+
+      // Clearing the vote for next round
+      this.voteCount = {};
+    }
+  }
+
+  /**
+   * Handles the result of the vote.
+   *
+   * @param kickedPlayerID The ID of the player with the most votes
+   */
+  private _handleVoteResult(kickedPlayerID: string): void {
+    // Kicking player based on # of votes.
+    const kickedPlayer = this.getPlayerByID(kickedPlayerID);
+    if (kickedPlayer) {
+      this.leave(kickedPlayer);
+    }
+  }
+
+  /**
    * Pairs each player's ID with their assigned role in the game
    */
   public playerIDToONWRole(player: Player): number | undefined {
