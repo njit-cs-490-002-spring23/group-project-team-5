@@ -143,60 +143,63 @@ export default function ONWBoard({ gameAreaController }: ONWGameProps): JSX.Elem
       setSelectedPlayer(username);
     };
 
-    const renderOtherPlayersRoles = () => {
-      if (playerRole.role === 'Seer') {
-        return (
-          <VStack spacing={4} align='center'>
-            <HStack spacing={4}>
-              <VStack>
-                {otherPlayerUsernames.map(username => (
-                  <Button
-                    key={username}
-                    variant='solid'
-                    colorScheme='teal'
-                    onClick={() => handleButtonClick(username)}
-                    disabled={selectedPlayer !== null}>
-                    {username}
-                  </Button>
-                ))}
-              </VStack>
-            </HStack>
-          </VStack>
-        );
-      }
-      else if (playerRole.role === 'Werewolf') {
-        return (
-          <VStack spacing={4} align='center'>
-            <HStack spacing={4}>
-              <VStack>
-                {otherPlayerUsernames.map(username => (
-                  <Button
-                    key={username}
-                    variant='solid'
-                    colorScheme='teal'
-                    onClick={() => handleButtonClick(username)}
-                    disabled={selectedPlayer !== null}>
-                    {username}
-                  </Button>
-                ))}
-              </VStack>
-            </HStack>
-          </VStack>
-        );
-      }
-      return null;
+    const renderOtherPlayers = () => {
+      return (
+        <VStack spacing={4} align='center'>
+          <HStack spacing={4}>
+            <VStack>
+              {otherPlayerUsernames.map(username => (
+                <Button
+                  key={username}
+                  variant='solid'
+                  colorScheme='teal'
+                  onClick={() => handleButtonClick(username)}
+                  disabled={selectedPlayer !== null}>
+                  {username}
+                </Button>
+              ))}
+            </VStack>
+          </HStack>
+        </VStack>
+      );
     };
 
+    if (playerRole.role == 'Seer') {
+      return (
+        <Box textAlign='center' fontSize='xl'>
+          <Text mb={4} fontSize='2xl' fontWeight='bold'>
+            Night Time
+          </Text>
+          <Text mb={4}>{getNightText()}</Text>
+          {selectedPlayer && (
+            <Text mb={4}>{`${selectedPlayer}'s role is: ${getOtherPlayerRole(selectedPlayer)}`}</Text>
+          )}
+          {renderOtherPlayers()}
+        </Box>
+      );
+    }
+    else if (playerRole.role == 'Werewolf') {
+      return (
+        <Box textAlign='center' fontSize='xl'>
+          <Text mb={4} fontSize='2xl' fontWeight='bold'>
+            Night Time
+          </Text>
+          <Text mb={4}>{getNightText()}</Text>
+          {selectedPlayer && (
+            <Text mb={4}>{`${selectedPlayer} will be killed.`}</Text>
+          )}
+          {renderOtherPlayers()}
+        </Box>
+      );
+    }
+
+    //Villager case
     return (
       <Box textAlign='center' fontSize='xl'>
         <Text mb={4} fontSize='2xl' fontWeight='bold'>
           Night Time
         </Text>
         <Text mb={4}>{getNightText()}</Text>
-        {selectedPlayer && (
-          <Text mb={4}>{`${selectedPlayer}'s role is: ${getOtherPlayerRole(selectedPlayer)}`}</Text>
-        )}
-        {renderOtherPlayersRoles()}
       </Box>
     );
   };
