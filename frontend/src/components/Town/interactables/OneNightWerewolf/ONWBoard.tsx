@@ -154,7 +154,8 @@ export default function ONWBoard({ gameAreaController }: ONWGameProps): JSX.Elem
                     key={username}
                     variant='solid'
                     colorScheme='teal'
-                    onClick={() => handleButtonClick(username)}>
+                    onClick={() => handleButtonClick(username)}
+                    disabled={selectedPlayer !== null}>
                     {username}
                   </Button>
                 ))}
