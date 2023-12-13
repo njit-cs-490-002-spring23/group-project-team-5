@@ -170,7 +170,7 @@ function ONWArea({ interactableID }: { interactableID: InteractableID }): JSX.El
 
   let gameStatusText = <></>;
   if (gameStatus === 'IN_PROGRESS') {
-    gameStatusText = <>Game in progress!</>;
+    gameStatusText = <>Game in Progress!</>;
   } else {
     let joinGameButton = <></>;
     if (
@@ -241,7 +241,7 @@ function ONWArea({ interactableID }: { interactableID: InteractableID }): JSX.El
         <AccordionItem>
           <Heading as='h3'>
             <AccordionButton>
-              <Box as='span' flex='1' textAlign='left'>
+              <Box as='span' flex='1' textAlign='center'>
                 Current Observers For Game
                 <AccordionIcon />
               </Box>
