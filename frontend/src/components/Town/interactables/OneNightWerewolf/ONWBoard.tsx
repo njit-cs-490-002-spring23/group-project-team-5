@@ -193,8 +193,8 @@ export default function ONWBoard({ gameAreaController }: ONWGameProps): JSX.Elem
             <>
               {`${currentUserUsername} `}
                 <br />
-                <br />
-                {"pray you survive the night! One of these people is a Werewolf."}
+               
+                {"Pray you survive the night! One of these people is a Werewolf."}
             </> 
         );
       case 'Werewolf':
@@ -232,15 +232,15 @@ export default function ONWBoard({ gameAreaController }: ONWGameProps): JSX.Elem
   };
 
   return (
-    <Flex direction="column" align="center" justify="center" w="50vh" h="45vh" bgImage="url('https://i.gifer.com/5qsh.gif')">
-      <VStack spacing={0}>
+    <Flex direction="column" align="center" justify="center" w="50vh" h="53vh" bgImage="url('https://i.gifer.com/5qsh.gif')">
+      <VStack spacing={3}>
       <Text fontSize='2xl' fontWeight='bold' color="orange.100" mb={4}>It's Night Time!</Text>
         <Text fontSize='2xl' fontWeight='bold' textAlign="center" w="35vh" color="orange.100" mb={4}>{getNightText()}</Text>
         {townController.players
           .filter(player => player.userName !== currentUserUsername)
           .map(player => (
-            <Box key={player.userName} p={3} boxShadow='md' rounded='md' color="orange.100">
-              <Text fontSize='lg'>{player.userName} - {getOtherPlayerRole(player.userName)}</Text>
+            <Box key={player.userName} p={3} boxShadow='md' rounded='md' color="orange">
+              {/* <Text fontSize='lg'>{player.userName} - {getOtherPlayerRole(player.userName)}</Text> */}
             </Box>
           ))
         }
@@ -301,7 +301,7 @@ export default function ONWBoard({ gameAreaController }: ONWGameProps): JSX.Elem
     // return <WelcomePlayersScreen />;
     // return <RoleAssignmentScreen playerONWRole={playerRole} />;
     // return <RevealWhoDiedScreen />;
-    // return renderNightScreen();
+    return renderNightScreen();
     // return <DiscussionTimeScreen />;
     // return <VoteScreen />;
     // return <EndScreen />;
