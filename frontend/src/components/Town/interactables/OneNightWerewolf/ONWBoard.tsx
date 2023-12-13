@@ -232,14 +232,14 @@ export default function ONWBoard({ gameAreaController }: ONWGameProps): JSX.Elem
   };
 
   return (
-    <Flex direction="column" align="center" justify="center" w="50vh" h="43vh" bgImage="url('https://i.gifer.com/5qsh.gif')">
-      <VStack spacing={1}>
+    <Flex direction="column" align="center" justify="center" w="50vh" h="45vh" bgImage="url('https://i.gifer.com/5qsh.gif')">
+      <VStack spacing={0}>
       <Text fontSize='2xl' fontWeight='bold' color="orange.100" mb={4}>It's Night Time!</Text>
         <Text fontSize='2xl' fontWeight='bold' textAlign="center" w="35vh" color="orange.100" mb={4}>{getNightText()}</Text>
         {townController.players
           .filter(player => player.userName !== currentUserUsername)
           .map(player => (
-            <Box key={player.userName} p={3} boxShadow='md' rounded='md'>
+            <Box key={player.userName} p={3} boxShadow='md' rounded='md' color="orange.100">
               <Text fontSize='lg'>{player.userName} - {getOtherPlayerRole(player.userName)}</Text>
             </Box>
           ))
@@ -298,39 +298,15 @@ export default function ONWBoard({ gameAreaController }: ONWGameProps): JSX.Elem
 
   // Function to render the appropriate screen based on onwGameStatus
   const renderScreen = () => {
-    // return <EndScreen />;
-    // return <DiscussionTimeScreen />;
-    // return <RevealWhoDiedScreen />;
-    // return <EndScreen />;
-    // return renderNightScreen();
     // return <WelcomePlayersScreen />;
-    // return <VoteScreen />;
     // return <RoleAssignmentScreen playerONWRole={playerRole} />;
+    // return <RevealWhoDiedScreen />;
+    // return renderNightScreen();
+    // return <DiscussionTimeScreen />;
+    // return <VoteScreen />;
+    // return <EndScreen />;
 
-    // switch (onwGameStatus) {
-    //   case 'WELCOME_PLAYERS':
-    //     return <WelcomePlayersScreen />;
-    //   case 'ROLE_ASSIGNMENT':
-    //     return <RoleAssignmentScreen playerONWRole={playerRole} />;
-    //   case 'NIGHT':
-    //     return (
-    //       <NightScreen
-    //         currentUsername={currentUserUsername}
-    //         otherPlayerUsernames={otherPlayerUsernames}
-    //         playerRole={playerRole}
-    //       />
-    //     );
-    //   case 'REVEAL_WHO_DIED':
-    //     return <RevealWhoDiedScreen />;
-    //   case 'DISCUSSION_TIME':
-    //     return <DiscussionTimeScreen />;
-    //   case 'VOTE':
-    //     return <VoteScreen />;
-    //   case 'END_SCREEN':
-    //     return <EndScreen />;
-    //   default:
-    //     return null;
-    // }
+
     switch (onwGameStatus) {
       case 'WELCOME_PLAYERS':
         return <WelcomePlayersScreen />;
