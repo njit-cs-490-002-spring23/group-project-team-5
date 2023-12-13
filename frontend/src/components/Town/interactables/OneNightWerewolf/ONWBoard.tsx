@@ -164,6 +164,26 @@ export default function ONWBoard({ gameAreaController }: ONWGameProps): JSX.Elem
           </VStack>
         );
       }
+      else if (playerRole.role === 'Werewolf') {
+        return (
+          <VStack spacing={4} align='center'>
+            <HStack spacing={4}>
+              <VStack>
+                {otherPlayerUsernames.map(username => (
+                  <Button
+                    key={username}
+                    variant='solid'
+                    colorScheme='teal'
+                    onClick={() => handleButtonClick(username)}
+                    disabled={selectedPlayer !== null}>
+                    {username}
+                  </Button>
+                ))}
+              </VStack>
+            </HStack>
+          </VStack>
+        );
+      }
       return null;
     };
 
