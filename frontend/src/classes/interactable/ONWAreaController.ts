@@ -7,10 +7,13 @@ import {
   ONWGameState,
   ONWRole,
   ONWStatus,
+  ONWVote,
   Player,
+  PlayerID,
 } from '../../types/CoveyTownSocket';
 import PlayerController from '../PlayerController';
 import GameAreaController, { GameEventTypes } from './GameAreaController';
+import InvalidParametersError from '../../../../townService/src/lib/InvalidParametersError';
 
 export const PLAYER_NOT_IN_GAME_ERROR = 'Player is not in game';
 
@@ -215,9 +218,6 @@ export default class ONWAreaController extends GameAreaController<ONWGameState, 
         [roles[i], roles[j]] = [roles[j], roles[i]];
       }
 
-      // Log the shuffled roles array for debugging
-      console.log('Shuffled roles array:', roles);
-
       for (let i = 0; i < playerCount; i++) {
         const game = this._model.game;
         if (game !== undefined) {
@@ -226,9 +226,6 @@ export default class ONWAreaController extends GameAreaController<ONWGameState, 
           game.state.roles[i] = game.state.roles[i] || {};
 
           game.state.roles[i].role = role;
-
-          // Add additional logging for debugging
-          console.log(`Player ${i + 1} role assignment: ${role}`);
 
           if (role === 'Werewolf') {
             game.state.roles[i].seer_appearance = 'Werewolf';
@@ -247,49 +244,7 @@ export default class ONWAreaController extends GameAreaController<ONWGameState, 
               'You are a Villager who is attempting to identify the Werewolf and murder them at daytime. At night, you take no actions.';
           }
         }
-        console.log(`SECOND : Player ${i + 1} was assigned the role: ${game.state.roles[i].role}`);
       }
-    }
-  }
-
-  /**
-   Handles a vote from a player to kick another player.
-   Updates the game state to refelct the vote
-   @param voter The player casting the vote
-   @param target The player being voted against
-   @throws InvalidParametersError if the voter or target is not in the game
-  * */
-   public handleVote(voter: Player, target: Player): void {
-    if (!this.isPlayerInGame(voter) || !this.isPlayerInGame(target) || voter.id === target.id) {
-      throw new InvalidParametersError('Invalid vote parameters');
-    }
-
-    // Update the vote count for the target player
-    this.voteCount[target.id] = (this.voteCount[target.id] || 0) + 1;
-
-    if (Object.keys(this.voteCount).length === this.getPlayers().length) {
-      // Figuring out who has the most votes.
-      const playerWithMostVotes = Object.keys(this.voteCount).reduce((prevPlayer, currentPlayer) =>
-        this.voteCount[currentPlayer] > this.voteCount[prevPlayer] ? currentPlayer : prevPlayer,
-      );
-
-      this._handleVoteResult(playerWithMostVotes);
-
-      // Clearing the vote for next round
-      this.voteCount = {};
-    }
-  }
-
-  /**
-   * Handles the result of the vote.
-   *
-   * @param kickedPlayerID The ID of the player with the most votes
-   */
-  private _handleVoteResult(kickedPlayerID: string): void {
-    // Kicking player based on # of votes.
-    const kickedPlayer = this.getPlayerByID(kickedPlayerID);
-    if (kickedPlayer) {
-      this.leave(kickedPlayer);
     }
   }
 
@@ -318,6 +273,96 @@ export default class ONWAreaController extends GameAreaController<ONWGameState, 
     if (game?.state.player3 === player.id) return 2;
     if (game?.state.player4 === player.id) return 3;
     return 4;
+  }
+
+  /**
+   * Initialize votes array in the game state
+   */
+  public initializeVotes() {
+    if (this._model.game) {
+      console.log('Initializing votes array');
+      this._model.game.state.votes = [];
+    }
+  }
+
+  /**
+   * Record a vote from a player
+   * @param voter PlayerController who is voting
+   * @param target PlayerController who is being voted for
+   */
+  public recordVote(voter: Player, target: Player) {
+    if (this._model.game) {
+      const vote: ONWVote = { voter: voter.id, target: target.id };
+      this._model.game.state.votes.push(vote);
+      console.log(`Recorded vote from ${voter.id} for ${target.id}`);
+    }
+  }
+
+  /**
+   * Get the number of votes a player has received
+   * @param target PlayerController being voted for
+   * @returns Number of votes
+   */
+  public getVotesForPlayer(target: PlayerController): number {
+    if (this._model.game) {
+      const votesForPlayer = this._model.game.state.votes.filter(
+        vote => vote.target === target.id,
+      ).length;
+      console.log(`Player ${target.id} has received ${votesForPlayer} votes`);
+      return votesForPlayer;
+    }
+    return 0;
+  }
+
+  /**
+   * Reset votes for a new round
+   */
+  public resetVotes() {
+    if (this._model.game) {
+      console.log('Resetting votes for a new round');
+      this._model.game.state.votes = [];
+    }
+  }
+
+  /**
+   * Determine the player with the most votes
+   * @returns PlayerController with the most votes, or undefined if there is a tie or no votes
+   */
+  public getMostVotedPlayer(): PlayerController | undefined {
+    if (this._model.game) {
+      const voteCounts = new Map<PlayerID, number>();
+
+      for (const vote of this._model.game.state.votes) {
+        const target: PlayerID = vote.target;
+        if (voteCounts.has(target)) {
+          voteCounts.set(target, voteCounts.get(target)! + 1);
+        } else {
+          voteCounts.set(target, 1);
+        }
+      }
+
+      let mostVotedPlayerID: PlayerID | undefined;
+      let mostVotes = 0;
+
+      for (const [playerID, votes] of voteCounts) {
+        if (votes > mostVotes) {
+          mostVotedPlayerID = playerID;
+          mostVotes = votes;
+        } else if (votes === mostVotes) {
+          mostVotedPlayerID = undefined; // Tie
+        }
+      }
+
+      // Convert PlayerID to PlayerController, assuming PlayerID is a string
+      const mostVotedPlayer = mostVotedPlayerID
+        ? this.occupants.find(eachOccupant => eachOccupant.id === mostVotedPlayerID)
+        : undefined;
+
+      console.log(`Most voted player: ${mostVotedPlayer ? mostVotedPlayer.id : 'None'}`);
+      return mostVotedPlayer;
+    }
+
+    return undefined;
   }
 
   /*
