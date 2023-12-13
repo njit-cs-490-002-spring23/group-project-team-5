@@ -92,11 +92,11 @@ export default class ONWGame extends Game<ONWGameState, ONWMove> {
       throw new InvalidParametersError(GAME_FULL_MESSAGE);
     }
     if (
-      this.state.player1 /* &&
+      this.state.player1 &&
       this.state.player2 &&
       this.state.player3 &&
       this.state.player4 &&
-      this.state.player5 */
+      this.state.player5 
     ) {
       this.state = {
         ...this.state,
