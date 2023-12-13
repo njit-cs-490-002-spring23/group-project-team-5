@@ -163,10 +163,7 @@ export default class ONWAreaController extends GameAreaController<ONWGameState, 
 
     const playerIndex = this.playerIDToONWRole(player);
 
-    console.log(`Debug: playerIndex for ${player.userName} is ${playerIndex}`);
-
     if (playerIndex === 0) {
-      console.log(`Debug: ${player.userName} is a Werewolf`);
       return {
         role: 'Werewolf',
         seer_appearance: 'Werewolf',
@@ -175,7 +172,6 @@ export default class ONWAreaController extends GameAreaController<ONWGameState, 
           'You are a Werewolf who is attempting to murder the villagers without being murdered at daytime. At night, you choose a player to kill.',
       };
     } else if (playerIndex === 1) {
-      console.log(`Debug: ${player.userName} is a Seer`);
       return {
         role: 'Seer',
         seer_appearance: 'Not Werewolf',
@@ -184,7 +180,6 @@ export default class ONWAreaController extends GameAreaController<ONWGameState, 
           'You are a Seer who is attempting to identify the Werewolf and murder them at daytime. At night, you choose a player to see if they are a werewolf.',
       };
     } else {
-      console.log(`Debug: ${player.userName} is a Villager`);
       return {
         role: 'Villager',
         seer_appearance: 'Not Werewolf',
@@ -260,8 +255,12 @@ export default class ONWAreaController extends GameAreaController<ONWGameState, 
   /**
    * Pairs each player's ID with their assigned role in the game
    */
-  public playerIDToONWRole(player: Player): number {
+  public playerIDToONWRole(player: Player): number | undefined {
     const game = this._model.game;
+    if (!game) {
+      // Handle the case where the game state is not available
+      return undefined;
+    }
     console.log('calling playerIDRole');
     if (
       game?.state.player1 !== player.id &&
@@ -270,7 +269,7 @@ export default class ONWAreaController extends GameAreaController<ONWGameState, 
       game?.state.player4 !== player.id &&
       game?.state.player5 !== player.id
     ) {
-      throw new Error(PLAYER_NOT_IN_GAME_ERROR);
+      return undefined;
     }
 
     if (game?.state.player1 === player.id) return 0;
@@ -279,4 +278,16 @@ export default class ONWAreaController extends GameAreaController<ONWGameState, 
     if (game?.state.player4 === player.id) return 3;
     return 4;
   }
+
+  /*
+  public checkForGameEnding(): void {
+    if (this._model.game?.state.status === 'OVER') {
+      this._model.game?.state = {
+        ...this.state,
+        status: 'OVER',
+      };
+      return;
+    }
+  }
+  */
 }
