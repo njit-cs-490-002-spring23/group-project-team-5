@@ -176,6 +176,7 @@ export default function ONWBoard({ gameAreaController }: ONWGameProps): JSX.Elem
   const [onwGameStatus, setONWgameStatus] = useState<ONWStatus>('WELCOME_PLAYERS'); // default start stage
   const [gameStatus, setGameStatus] = useState<GameStatus>(gameAreaController.status);
   const toast = useToast();
+  const [selectedPlayer, setSelectedPlayer] = useState<string | null>(null);
   const townController = useTownController();
 
   // Fetch other player usernames
@@ -187,16 +188,70 @@ export default function ONWBoard({ gameAreaController }: ONWGameProps): JSX.Elem
 
   // Custom component for the Night screen
   const renderNightScreen = () => {
-  const getNightText = () => {
-    switch (playerRole.role) {
-      case 'Villager':
+    const getNightText = () => {
+      switch (playerRole.role) {
+        case 'Villager':
+          return `${currentUserUsername}, pray you survive the night! One of these people is a Werewolf.`;
+        case 'Werewolf':
+          return `${currentUserUsername}, choose who you want to kill and defend yourself in the morning.`;
+        case 'Seer':
+          return `${currentUserUsername}, choose one of these players to reveal their role.`;
+        default:
+          return '';
+      }
+    };
+
+    const getOtherPlayerRole = (username: string) => {
+      const otherPlayer = townController.players.find(player => player.userName === username);
+      if (otherPlayer) {
+        const otherPlayerRole = gameAreaController.playerONWRole(otherPlayer);
+        return otherPlayerRole.role;
+      }
+      return '';
+    };
+    const handleButtonClick = (username: string) => {
+      setSelectedPlayer(username);
+    };
+
+    const renderOtherPlayersRoles = () => {
+      if (playerRole.role === 'Seer') {
         return (
-            <>
-              {`${currentUserUsername} `}
-                <br />
-                <br />
-                {"pray you survive the night! One of these people is a Werewolf."}
-            </> 
+          <VStack spacing={4} align='center'>
+            <HStack spacing={4}>
+              <VStack>
+                {otherPlayerUsernames.map(username => (
+                  <Button
+                    key={username}
+                    variant='solid'
+                    colorScheme='teal'
+                    onClick={() => handleButtonClick(username)}
+                    disabled={selectedPlayer !== null}>
+                    {username}
+                  </Button>
+                ))}
+              </VStack>
+            </HStack>
+          </VStack>
+        );
+      }
+      else if (playerRole.role === 'Werewolf') {
+        return (
+          <VStack spacing={4} align='center'>
+            <HStack spacing={4}>
+              <VStack>
+                {otherPlayerUsernames.map(username => (
+                  <Button
+                    key={username}
+                    variant='solid'
+                    colorScheme='teal'
+                    onClick={() => handleButtonClick(username)}
+                    disabled={selectedPlayer !== null}>
+                    {username}
+                  </Button>
+                ))}
+              </VStack>
+            </HStack>
+          </VStack>
         );
       case 'Werewolf':
         return (
@@ -229,7 +284,18 @@ export default function ONWBoard({ gameAreaController }: ONWGameProps): JSX.Elem
       const otherPlayerRole = gameAreaController.playerONWRole(otherPlayer);
       return otherPlayerRole.role;
     }
-    return '';
+    return (
+      <Box textAlign='center' fontSize='xl'>
+        <Text mb={4} fontSize='2xl' fontWeight='bold'>
+          Night Time
+        </Text>
+        <Text mb={4}>{getNightText()}</Text>
+        {selectedPlayer && (
+          <Text mb={4}>{`${selectedPlayer}'s role is: ${getOtherPlayerRole(selectedPlayer)}`}</Text>
+        )}
+        {renderOtherPlayersRoles()}
+      </Box>
+    );
   };
 
   return (
@@ -286,7 +352,7 @@ export default function ONWBoard({ gameAreaController }: ONWGameProps): JSX.Elem
                 }, 5000); // 3 seconds for VOTE (3000 in milliseconds)
               }, 5000); // 3 seconds for DISCUSSION_TIME
             }, 5000); // 3 seconds for REVEAL_WHO_DIED
-          }, 5000); // 3 seconds for NIGHT
+          }, 10000); // 3 seconds for NIGHT
         }, 5000); // 3 seconds for ROLE_ASSIGNMENT
       }, 5000); // 3 seconds for WELCOME
     }

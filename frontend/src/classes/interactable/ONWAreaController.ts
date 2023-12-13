@@ -16,7 +16,6 @@ export const PLAYER_NOT_IN_GAME_ERROR = 'Player is not in game';
 
 export const NO_GAME_IN_PROGRESS_ERROR = 'No game in progress';
 
-export type ONWCell = 'player1' | 'player2' | 'player3' | 'player4' | 'player5' | undefined;
 // eslint-disable-next-line @typescript-eslint/ban-types
 export type ONWEvents = GameEventTypes & {
   onwStatusChanged: (onwStatus: string) => void;
@@ -83,6 +82,7 @@ export default class ONWAreaController extends GameAreaController<ONWGameState, 
 
   /**
    * Returns true if the current player is a player in this game
+   * Based on https://github.com/neu-se/covey.town
    */
   get isPlayer(): boolean {
     return this._model.game?.players.includes(this._townController.ourPlayer.id) || false;
@@ -90,6 +90,7 @@ export default class ONWAreaController extends GameAreaController<ONWGameState, 
 
   /**
    * Returns the winner of the game, if there is one
+   * Based on https://github.com/neu-se/covey.town
    */
   get winner(): PlayerController | undefined {
     const winner = this._model.game?.state.winner;
@@ -103,6 +104,8 @@ export default class ONWAreaController extends GameAreaController<ONWGameState, 
    * Returns the game piece of the current player, if the current player is a player in this game
    *
    * Throws an error PLAYER_NOT_IN_GAME_ERROR if the current player is not a player in this game
+   * 
+   * Based on https://github.com/neu-se/covey.town
    */
   get gamePiece(): 'player1' | 'player2' | 'player3' | 'player4' | 'player5' {
     if (this.player1?.id === this._townController.ourPlayer.id) {
@@ -122,6 +125,7 @@ export default class ONWAreaController extends GameAreaController<ONWGameState, 
   /**
    * Returns the status of the game.
    * Defaults to 'WAITING_TO_START' if the game is not in progress
+   * Based on https://github.com/neu-se/covey.town
    */
   get status(): GameStatus {
     const status = this._model.game?.state.status;
@@ -145,6 +149,7 @@ export default class ONWAreaController extends GameAreaController<ONWGameState, 
 
   /**
    * Returns true if the game is in progress
+   * Based on https://github.com/neu-se/covey.town
    */
   public isActive(): boolean {
     return this._model.game?.state.status === 'IN_PROGRESS';
