@@ -64,7 +64,7 @@ const RoleAssignmentScreen: React.FC<{ playerONWRole: ONWRole }> = ({ playerONWR
 
 
   return (
-    <Center h="43vh" w="60vh" bg={bgColor}>
+    <Center justify="center" align="center" h="43vh" w="60vh" bg={bgColor}>
       <VStack spacing={6} align="center">
         <Text fontSize='4xl' fontWeight='bold' color={orange}>
           Role Assignment
@@ -182,56 +182,68 @@ export default function ONWBoard({ gameAreaController }: ONWGameProps): JSX.Elem
 
   // Custom component for the Night screen
   const renderNightScreen = () => {
-    const getNightText = () => {
-      switch (playerRole.role) {
-        case 'Villager':
-          return `${currentUserUsername}, pray you survive the night! One of these people is a Werewolf.`;
-        case 'Werewolf':
-          return `${currentUserUsername}, choose who you want to kill and defend yourself in the morning.`;
-        case 'Seer':
-          return `${currentUserUsername}, choose one of these players to reveal their role.`;
-        default:
-          return '';
-      }
-    };
-    const getOtherPlayerRole = (username: string) => {
-      const otherPlayer = townController.players.find(player => player.userName === username);
-      if (otherPlayer) {
-        const otherPlayerRole = gameAreaController.playerONWRole(otherPlayer);
-        return otherPlayerRole.role;
-      }
-      return '';
-    };
-
-    const renderOtherPlayersRoles = () => {
-      if (playerRole.role === 'Seer') {
+  const getNightText = () => {
+    switch (playerRole.role) {
+      case 'Villager':
         return (
-          <VStack spacing={4} align='center'>
-            <HStack spacing={4}>
-              <VStack>
-                {otherPlayerUsernames.map(username => (
-                  <Button key={username} variant='solid' colorScheme='teal'>
-                    {`${username}: ${getOtherPlayerRole(username)}`}
-                  </Button>
-                ))}
-              </VStack>
-            </HStack>
-          </VStack>
+            <>
+              {`${currentUserUsername} `}
+                <br />
+                <br />
+                {"pray you survive the night! One of these people is a Werewolf."}
+            </> 
         );
-      }
-      return null;
-    };
-
-    return (
-      <Box textAlign='center' fontSize='xl'>
-        <Text mb={4} fontSize='2xl' fontWeight='bold'>
-          Night Time
-        </Text>
-        <Text mb={4}>{getNightText()}</Text>
-        {renderOtherPlayersRoles()}
-      </Box>
-    );
+      case 'Werewolf':
+        return (
+          <>
+            <br />
+            
+            {`${currentUserUsername} `}
+            <br />
+          
+            {"choose who you want to kill and defend yourself in the morning."}
+          </>
+        );
+      case 'Seer':
+        return (
+          <>
+            {`${currentUserUsername} `}
+              <br />
+              <br />
+              {"choose one of these players to reveal their role."}
+          </> 
+      );
+      default:
+        return '';
+    }
   };
+
+  const getOtherPlayerRole = (username: string) => {
+    const otherPlayer = townController.players.find(player => player.userName === username);
+    if (otherPlayer) {
+      const otherPlayerRole = gameAreaController.playerONWRole(otherPlayer);
+      return otherPlayerRole.role;
+    }
+    return '';
+  };
+
+  return (
+    <Flex direction="column" align="center" justify="center" w="50vh" h="43vh" bgImage="url('https://i.gifer.com/5qsh.gif')">
+      <VStack spacing={1}>
+      <Text fontSize='2xl' fontWeight='bold' color="orange.100" mb={4}>It's Night Time!</Text>
+        <Text fontSize='2xl' fontWeight='bold' textAlign="center" w="35vh" color="orange.100" mb={4}>{getNightText()}</Text>
+        {townController.players
+          .filter(player => player.userName !== currentUserUsername)
+          .map(player => (
+            <Box key={player.userName} p={3} boxShadow='md' rounded='md'>
+              <Text fontSize='lg'>{player.userName} - {getOtherPlayerRole(player.userName)}</Text>
+            </Box>
+          ))
+        }
+      </VStack>
+    </Flex>
+  );
+};
 
   useEffect(() => {
     console.log('The ONW Game started!');
@@ -282,7 +294,8 @@ export default function ONWBoard({ gameAreaController }: ONWGameProps): JSX.Elem
 
   // Function to render the appropriate screen based on onwGameStatus
   const renderScreen = () => {
-    return <WelcomePlayersScreen />;
+    // return renderNightScreen();
+    // return <WelcomePlayersScreen />;
     // return <VoteScreen />;
     // return <RoleAssignmentScreen playerONWRole={playerRole} />;
 
