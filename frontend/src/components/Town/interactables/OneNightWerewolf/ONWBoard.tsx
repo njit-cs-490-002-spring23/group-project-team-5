@@ -7,6 +7,7 @@ import {
   Container,
   useColorModeValue,
   Heading,
+  Center,
   Text,
   useToast,
   Box,
@@ -28,12 +29,12 @@ export type ONWGameProps = {
 // Custom component for the Welcome Players screen
 // eslint-disable-next-line @typescript-eslint/naming-convention
 const WelcomePlayersScreen: React.FC = () => {
-  const bgColor = 'black' // Adaptive background color
+  const bgColor = 'black' 
   const white = 'white'
   const orange = 'orange.100'
 
   return (
-    <Flex direction="column" align="center" justify="center" w="60vh" h="43vh" bg={bgColor}>
+    <Flex direction="column" align="center" justify="center" w="60vh" h="43vh" bgImage="url('https://i.makeagif.com/media/9-18-2018/RySj_U.gif')">
       <Box textAlign='center' p={5}>
         <Text mb={3} fontSize='3xl' color={orange} fontWeight='medium'>
           Welcome to
@@ -55,18 +56,33 @@ const WelcomePlayersScreen: React.FC = () => {
 
 // Custom component for the Role Assignment screen
 // eslint-disable-next-line @typescript-eslint/naming-convention
-const RoleAssignmentScreen: React.FC<{ playerONWRole: ONWRole }> = ({ playerONWRole }) => (
-  <Box textAlign='center' fontSize='xl'>
-    <Text mb={8} fontSize='5xl'>
-      Role Assignment
-    </Text>
-    <Text mb={8} fontSize='3xl'>
-      You are a {playerONWRole.role}
-    </Text>
-    <Text mb={4}>Everyone is getting their roles.</Text>
-    <Text fontSize='lg'>{playerONWRole.description}</Text>
-  </Box>
-);
+const RoleAssignmentScreen: React.FC<{ playerONWRole: ONWRole }> = ({ playerONWRole }) => {
+  const bgColor = 'black' 
+  const white = 'white'
+  const orange = 'orange.100'
+  const roleColor = 'teal.500'; 
+
+
+  return (
+    <Center h="43vh" w="60vh" bg={bgColor}>
+      <VStack spacing={6} align="center">
+        <Text fontSize='4xl' fontWeight='bold' color={orange}>
+          Role Assignment
+        </Text>
+        <Text fontSize='4xl' fontWeight='semibold' color={orange}>
+          You are a {playerONWRole.role}
+        </Text>
+        <Text fontSize='lg'  w="30vh" color={orange}>
+          {playerONWRole.description}
+        </Text>
+
+        <Text fontSize='xl' color={orange}>
+          Everyone is getting their roles...
+        </Text>
+      </VStack>
+    </Center>
+  );
+};
 
 // Custom component for the Reveal Who Died screen
 // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -266,9 +282,9 @@ export default function ONWBoard({ gameAreaController }: ONWGameProps): JSX.Elem
 
   // Function to render the appropriate screen based on onwGameStatus
   const renderScreen = () => {
-    // return <WelcomePlayersScreen />;
+    return <WelcomePlayersScreen />;
     // return <VoteScreen />;
-    return <RoleAssignmentScreen playerONWRole={playerRole} />;
+    // return <RoleAssignmentScreen playerONWRole={playerRole} />;
 
     // switch (onwGameStatus) {
     //   case 'WELCOME_PLAYERS':
