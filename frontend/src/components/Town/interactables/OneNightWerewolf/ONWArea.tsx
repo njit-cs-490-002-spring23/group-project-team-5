@@ -23,7 +23,12 @@ import ONWAreaController from '../../../../classes/interactable/ONWAreaControlle
 import PlayerController from '../../../../classes/PlayerController';
 import { useInteractable, useInteractableAreaController } from '../../../../classes/TownController';
 import useTownController from '../../../../hooks/useTownController';
-import { GameResult, GameStatus, InteractableID } from '../../../../types/CoveyTownSocket';
+import {
+  GameResult,
+  GameStatus,
+  InteractableID,
+  ONWStatus,
+} from '../../../../types/CoveyTownSocket';
 import GameAreaInteractable from '../GameArea';
 import ONWLeaderboard from '../Leaderboard';
 import ONWBoard from './ONWBoard';
@@ -84,6 +89,7 @@ function ONWArea({ interactableID }: { interactableID: InteractableID }): JSX.El
   const townController = useTownController();
   const [history, setHistory] = useState<GameResult[]>(gameAreaController.history);
   const [gameStatus, setGameStatus] = useState<GameStatus>(gameAreaController.status);
+  const [onwGameStatus, setONWGameStatus] = useState<ONWStatus>(gameAreaController.onwStatus);
   const [observers, setObservers] = useState<PlayerController[]>(gameAreaController.observers);
   const [joiningGame, setJoiningGame] = useState(false);
   const [player1, setPlayer1] = useState<PlayerController | undefined>(gameAreaController.player1);
@@ -111,7 +117,7 @@ function ONWArea({ interactableID }: { interactableID: InteractableID }): JSX.El
         try {
           await new Promise<void>(resolve => {
             gameAreaController.assignRoles();
-            // gameAreaController.playerIDToONWRole();
+            gameAreaController.playerIDToONWRole();
             resolve();
           });
           setRolesAssigned(true);
@@ -119,6 +125,13 @@ function ONWArea({ interactableID }: { interactableID: InteractableID }): JSX.El
         } catch (error) {
           console.error('Error assigning roles:', error);
         }
+      }
+
+      // Check if the game is over and reset to WAITING_TO_START
+      // Check if the game is over and reset to WAITING_TO_START
+      if (gameAreaController.status === 'OVER') {
+        setGameStatus('WAITING_TO_START');
+        setRolesAssigned(false);
       }
     };
 
@@ -162,7 +175,9 @@ function ONWArea({ interactableID }: { interactableID: InteractableID }): JSX.El
     let joinGameButton = <></>;
     if (
       (gameAreaController.status === 'WAITING_TO_START' && !gameAreaController.isPlayer) ||
-      gameAreaController.status === 'OVER'
+      !gameAreaController.players.some(
+        player => player.userName === townController.ourPlayer.userName,
+      )
     ) {
       joinGameButton = (
         <Button
@@ -268,8 +283,10 @@ function ONWArea({ interactableID }: { interactableID: InteractableID }): JSX.El
  */
 export default function ONWAreaWrapper(): JSX.Element {
   const gameArea = useInteractable<GameAreaInteractable>('gameArea');
+  const [modalOpen, setModalOpen] = useState(true);
   const townController = useTownController();
   const toast = useToast();
+  const [gameStatus, setGameStatus] = useState<GameStatus>('WAITING_TO_START');
 
   const closeModal = useCallback(() => {
     if (gameArea) {
@@ -279,11 +296,18 @@ export default function ONWAreaWrapper(): JSX.Element {
       // Show toast when the modal is closed
       toast({
         title: 'You left the game',
-        description: 'Everyone please close the window and rejoin',
+        description: 'The game restarted for everyone',
         status: 'info',
       });
     }
+    setModalOpen(false);
   }, [townController, gameArea, toast]);
+
+  useEffect(() => {
+    if (gameStatus === 'OVER') {
+      closeModal();
+    }
+  }, [gameStatus, closeModal]);
 
   if (gameArea && gameArea.getData('type') === 'OneNightWerewolf') {
     return (

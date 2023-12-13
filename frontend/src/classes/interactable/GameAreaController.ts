@@ -74,10 +74,15 @@ export default abstract class GameAreaController<
   public async leaveGame() {
     const instanceID = this._instanceID;
     if (instanceID) {
-      await this._townController.sendInteractableCommand(this.id, {
-        type: 'LeaveGame',
-        gameID: instanceID,
-      });
+      // Iterate over all players and call leaveGame for each player
+      for (const player of this._players) {
+        console.log(`Removing this player ${player.userName}`);
+        await this._townController.sendInteractableCommand(this.id, {
+          type: 'LeaveGame',
+          gameID: instanceID,
+          playerID: player.id,
+        });
+      }
     }
   }
 

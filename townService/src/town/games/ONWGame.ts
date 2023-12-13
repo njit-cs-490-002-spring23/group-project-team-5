@@ -137,7 +137,8 @@ export default class ONWGame extends Game<ONWGameState, ONWMove> {
         player5: undefined,
       };
     }
-    if (this.state.player5 === undefined) {
+    if (this.state.player2 === undefined) {
+      // YOU NEED TO CHANGE THIS
       // Game not yet started, set status to 'WAITING_TO_START' and reset all players
       this.state = {
         status: 'WAITING_TO_START',
