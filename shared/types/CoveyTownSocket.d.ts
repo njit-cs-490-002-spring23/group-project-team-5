@@ -117,6 +117,16 @@ export interface ONWGameState extends WinnableGameState {
   player5?: PlayerID;
   onwStatus?: ONWStatus;
   roles: ONWRole[5];
+  votes: ONWVote[];
+}
+
+/**
+ * Type for the state of a ONW Vote
+ * Includes the who voted and who they voted for
+ */
+export interface ONWVote {
+  voter: PlayerID;
+  target: PlayerID;
 }
 
 /**

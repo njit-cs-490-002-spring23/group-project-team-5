@@ -117,7 +117,6 @@ function ONWArea({ interactableID }: { interactableID: InteractableID }): JSX.El
         try {
           await new Promise<void>(resolve => {
             gameAreaController.assignRoles();
-            gameAreaController.playerIDToONWRole();
             resolve();
           });
           setRolesAssigned(true);
