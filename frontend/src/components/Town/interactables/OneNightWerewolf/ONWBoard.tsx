@@ -232,7 +232,7 @@ export default function ONWBoard({ gameAreaController }: ONWGameProps): JSX.Elem
   };
 
   return (
-    <Flex direction="column" align="center" justify="center" w="50vh" h="53vh" bgImage="url('https://i.gifer.com/5qsh.gif')">
+    <Flex direction="column" align="center" justify="center" w="50vh" h="45vh" bgImage="url('https://i.gifer.com/5qsh.gif')">
       <VStack spacing={3}>
       <Text fontSize='2xl' fontWeight='bold' color="orange.100" mb={4}>It's Night Time!</Text>
         <Text fontSize='2xl' fontWeight='bold' textAlign="center" w="35vh" color="orange.100" mb={4}>{getNightText()}</Text>
