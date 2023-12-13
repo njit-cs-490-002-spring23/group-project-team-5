@@ -58,11 +58,11 @@ const NightScreen: React.FC<{
   const getNightText = () => {
     switch (playerRole.role) {
       case 'Villager':
-        return 'Pray you survive the night! One of these people are a Werewolf.';
+        return `${currentUsername}, pray you survive the night! One of these people are a Werewolf.`;
       case 'Werewolf':
-        return 'Choose who you want to kill and defend yourself in the morning.';
+        return `${currentUsername},choose who you want to kill and defend yourself in the morning.`;
       case 'Seer':
-        return 'Choose one of these players to reveal their role.';
+        return `${currentUsername},choose one of these players to reveal their role.`;
       default:
         return '';
     }
@@ -149,6 +149,7 @@ export default function ONWBoard({ gameAreaController }: ONWGameProps): JSX.Elem
   const [gameStatus, setGameStatus] = useState<GameStatus>(gameAreaController.status);
   const toast = useToast();
   const townController = useTownController();
+
   // Fetch other player usernames
   const currentUserUsername = townController.ourPlayer.userName;
   const otherPlayerUsernames = townController.players
@@ -158,7 +159,7 @@ export default function ONWBoard({ gameAreaController }: ONWGameProps): JSX.Elem
 
   useEffect(() => {
     console.log('The ONW Game started!');
-
+    console.log('gameStatus changed:', gameStatus);
     /*
      * This controlls the timing of the game
      */
@@ -180,22 +181,28 @@ export default function ONWBoard({ gameAreaController }: ONWGameProps): JSX.Elem
                 setONWgameStatus('VOTE');
                 setTimeout(() => {
                   setONWgameStatus('END_SCREEN');
+                  console.log('Game status should change to OVER after 3 seconds');
                   setTimeout(() => {
+                    setONWgameStatus('WELCOME_PLAYERS');
                     setGameStatus('OVER');
-                  }, 3000); // 3 seconds for END_SCREEN
-                }, 3000); // 3 seconds for VOTE (3000 in milliseconds)
-              }, 3000); // 3 seconds for DISCUSSION_TIME
-            }, 3000); // 3 seconds for REVEAL_WHO_DIED
-          }, 10000); // 3 seconds for NIGHT
-        }, 100000); // 3 seconds for ROLE_ASSIGNMENT
-      }, 3000); // 3 seconds for WELCOME
+                    console.log(
+                      'gameAreaController.status in useEffect:',
+                      gameAreaController.status,
+                    );
+                  }, 1000); // 3 seconds for END_SCREEN
+                }, 1000); // 3 seconds for VOTE (3000 in milliseconds)
+              }, 1000); // 3 seconds for DISCUSSION_TIME
+            }, 1000); // 3 seconds for REVEAL_WHO_DIED
+          }, 1000); // 3 seconds for NIGHT
+        }, 1000); // 3 seconds for ROLE_ASSIGNMENT
+      }, 1000); // 3 seconds for WELCOME
     }
 
     gameAreaController.addListener('ONWgameUpdated', setONWgameStatus);
     return () => {
       gameAreaController.removeListener('ONWgameUpdated', setONWgameStatus);
     };
-  }, [townController, gameAreaController]);
+  }, [townController, gameAreaController, gameStatus]);
 
   // Function to render the appropriate screen based on onwGameStatus
   const renderScreen = () => {
