@@ -108,6 +108,7 @@ const VoteScreen: React.FC<{
   currentUsername: string;
   otherPlayerUsernames?: string[]; 
   playerRole: ONWRole;
+  
 }> = ({ currentUsername, otherPlayerUsernames, playerRole }) => {
 
   const [voteConfirmation, setVoteConfirmation] = useState('');
@@ -117,19 +118,19 @@ const VoteScreen: React.FC<{
     setVoteConfirmation(`${currentUsername} voted for ${targetUsername}`);
   };
   return (
-    <Box textAlign='center' fontSize='xl' p={5}>
-      <Text mb={2} fontSize='2xl' fontWeight='bold'>
+    <Box textAlign='center' fontSize='xl' bgImage="url('https://66.media.tumblr.com/16cf982b03b0409e9428801e559b36bc/tumblr_o565psJdUZ1u9yiolo1_500.gif')" p={5}>
+      <Text mb={2} fontSize='2xl' fontWeight='bold' color='orange.100'>
         Voting Time
       </Text>
-      <Text mb={4} fontSize='lg'>
+      <Text mb={4} fontSize='lg' color='orange.100'>
         Select the player you would like to vote for!
       </Text>
       <VStack spacing={3}>
-        <Button colorScheme='teal'>Player 1</Button>
-        <Button colorScheme='teal'>Player 2</Button>
-        <Button colorScheme='teal'>Player 3</Button>
-        <Button colorScheme='teal'>Player 4</Button>
-        <Button colorScheme='teal'>Player 5</Button>
+        <Button colorScheme='orange'>Player 1</Button>
+        <Button colorScheme='orange'>Player 2</Button>
+        <Button colorScheme='orange'>Player 3</Button>
+        <Button colorScheme='orange'>Player 4</Button>
+        <Button colorScheme='orange'>Player 5</Button>
       </VStack>
     </Box>
   );
@@ -295,9 +296,9 @@ export default function ONWBoard({ gameAreaController }: ONWGameProps): JSX.Elem
   // Function to render the appropriate screen based on onwGameStatus
   const renderScreen = () => {
     // return <EndScreen />;
-    return renderNightScreen();
+    // return renderNightScreen();
     // return <WelcomePlayersScreen />;
-    // return <VoteScreen />;
+    return <VoteScreen />;
     // return <RoleAssignmentScreen playerONWRole={playerRole} />;
 
     // switch (onwGameStatus) {
