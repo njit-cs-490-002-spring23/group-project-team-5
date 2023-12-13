@@ -87,8 +87,10 @@ const RoleAssignmentScreen: React.FC<{ playerONWRole: ONWRole }> = ({ playerONWR
 // Custom component for the Reveal Who Died screen
 // eslint-disable-next-line @typescript-eslint/naming-convention
 const RevealWhoDiedScreen: React.FC = () => (
-  <Box textAlign='center' fontSize='xl'>
-    <Text mb={4}>Revealing who died...</Text>
+  <Box textAlign='center' fontSize='xl' bg="black" w="50vh" h="44vh" bgImage="url('https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExNmx6c2UzamRhNzkyYnZ5b2x3MXgyNzRqeGZlNjRnMGF6amoxZDA2YiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/gKZ8okUrtjkguMBsnt/giphy.gif')" p={5}>
+      <Text mb={1} fontSize='2xl' fontWeight='bold' color='orange.100'>
+        Revealing who died.
+      </Text>
   </Box>
 );
 
@@ -295,10 +297,12 @@ export default function ONWBoard({ gameAreaController }: ONWGameProps): JSX.Elem
 
   // Function to render the appropriate screen based on onwGameStatus
   const renderScreen = () => {
+    return <DiscussionTimeScreen />;
+    // return <RevealWhoDiedScreen />;
     // return <EndScreen />;
     // return renderNightScreen();
     // return <WelcomePlayersScreen />;
-    return <VoteScreen />;
+    // return <VoteScreen />;
     // return <RoleAssignmentScreen playerONWRole={playerRole} />;
 
     // switch (onwGameStatus) {
