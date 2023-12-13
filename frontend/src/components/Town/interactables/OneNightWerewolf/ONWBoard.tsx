@@ -294,8 +294,8 @@ export default function ONWBoard({ gameAreaController }: ONWGameProps): JSX.Elem
 
   // Function to render the appropriate screen based on onwGameStatus
   const renderScreen = () => {
-    return <EndScreen />;
-    // return renderNightScreen();
+    // return <EndScreen />;
+    return renderNightScreen();
     // return <WelcomePlayersScreen />;
     // return <VoteScreen />;
     // return <RoleAssignmentScreen playerONWRole={playerRole} />;
