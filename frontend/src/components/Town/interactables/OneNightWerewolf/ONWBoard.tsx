@@ -97,8 +97,10 @@ const RevealWhoDiedScreen: React.FC = () => (
 // Custom component for the Discussion Time screen
 // eslint-disable-next-line @typescript-eslint/naming-convention
 const DiscussionTimeScreen: React.FC = () => (
-  <Box textAlign='center' fontSize='xl'>
-    <Text mb={4}>Discussion time!</Text>
+  <Box textAlign='center' fontSize='xl' bgImage="url('https://gifdb.com/images/high/black-background-space-stars-4l34z6vp3yv6qv3x.gif')"w="50vh" h="44vh" p={5}>
+      <Text mb={1} fontSize='2xl' fontWeight='bold' color='orange.100'>
+        Discussion Time!
+      </Text>
   </Box>
 );
 
@@ -143,8 +145,8 @@ const VoteScreen: React.FC<{
 // Custom component for the End Screen
 // eslint-disable-next-line @typescript-eslint/naming-convention
 const EndScreen: React.FC = () => (
-  <Box textAlign='center' fontSize='xl'>
-    <Text mb={4}>Game over! Displaying end screen.</Text>
+  <Box textAlign='center' fontSize='xl' bgImage="url('https://www.gifcen.com/wp-content/uploads/2021/05/the-end-gif-2.gif')" w="50vh" h="44vh" p={5}>
+      
   </Box>
 );
 
@@ -297,7 +299,8 @@ export default function ONWBoard({ gameAreaController }: ONWGameProps): JSX.Elem
 
   // Function to render the appropriate screen based on onwGameStatus
   const renderScreen = () => {
-    return <DiscussionTimeScreen />;
+    return <EndScreen />;
+    // return <DiscussionTimeScreen />;
     // return <RevealWhoDiedScreen />;
     // return <EndScreen />;
     // return renderNightScreen();
